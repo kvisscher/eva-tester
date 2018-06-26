@@ -7,7 +7,7 @@ import {
   HTTP_INTERCEPTORS
 } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { getCurrentUser } from '@springtree/eva-sdk-redux';
+import { getCurrentUser, settings } from '@springtree/eva-sdk-redux';
 import { filter, map, take, mergeMap } from 'rxjs/operators';
 import { isNil } from 'lodash';
 
@@ -17,22 +17,16 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    return getCurrentUser.getResponse$().pipe(
-      filter(response => !isNil(response)),
-      map(response => response.User.AuthenticationToken),
-      mergeMap(authorization => {
-        if ( !isNil(authorization) ) {
-          request = request.clone({
-            setHeaders: {
-              'Content-Type': 'application/json',
-              authorization
-            }
-          });
+    if (!isNil(settings.userToken)) {
+      request = request.clone({
+        setHeaders: {
+          'Content-Type': 'application/json',
+          authorization: settings.userToken
         }
+      });
+    }
 
-        return next.handle(request);
-      })
-    );
+    return next.handle(request);
   }
 }
 
