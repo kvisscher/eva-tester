@@ -1,11 +1,11 @@
-import { Component, forwardRef, Inject, Input, NgZone } from '@angular/core';
+import { Component, forwardRef, Inject, Input, NgZone, Output, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 
 import { BaseEditor } from './base-editor';
 import { NGX_MONACO_EDITOR_CONFIG, NgxMonacoEditorConfig } from './config';
 import { NgxEditorModel } from './types';
-import { fromEvent } from 'rxjs';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 @Component({
   selector: 'eva-monaco-editor',
@@ -28,9 +28,13 @@ import { fromEvent } from 'rxjs';
   }]
 })
 export class EditorComponent extends BaseEditor implements ControlValueAccessor {
+
+  @Output() monacoLoad = new EventEmitter<void>();
+
   private _value = '';
 
   propagateChange = (_: any) => {};
+
   onTouched = () => {};
 
   @Input('model')
@@ -44,6 +48,8 @@ export class EditorComponent extends BaseEditor implements ControlValueAccessor 
 
   constructor(private zone: NgZone, @Inject(NGX_MONACO_EDITOR_CONFIG) private editorConfig: NgxMonacoEditorConfig) {
     super(editorConfig);
+
+    this.editorConfig.onMonacoLoad = () => this.monacoLoad.emit();
   }
 
   writeValue(value: any): void {

@@ -1,9 +1,9 @@
 import { AfterViewInit, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { NgxMonacoEditorConfig } from './config';
 import isRequired from '../../decorators/is-required';
 
-let loadedMonaco: boolean = false;
+let loadedMonaco = false;
 let loadPromise: Promise<void>;
 declare const require: any;
 
