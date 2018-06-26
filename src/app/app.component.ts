@@ -102,7 +102,6 @@ export class AppComponent implements ILoggable {
           [
             login.createFetchAction({
               Username: 'eva@springtree.nl',
-              Password: 'Spring2017',
               RegisterApiKey: true,
               SelectOrganizationByApplicationID: true
             }),
