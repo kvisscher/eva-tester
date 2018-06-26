@@ -10,7 +10,7 @@ export default function isRequired(target: any, prop: string) {
   Object.defineProperty(target, NG_ON_ONIT_NAME, {
     value: function () {
 
-      if (target[prop] == null) {
+      if (this[prop] == null) {
         console.error(
           target.constructor.name +
           `: ${prop} is required, but was not provided`
