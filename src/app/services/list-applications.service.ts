@@ -7,8 +7,7 @@ export class ListApplicationsService {
 
   constructor(private http: HttpClient) { }
 
-  async fetch() {
-
-    this.http.get(END_POINT_URL + 'tester/api/services');
+  fetch() {
+    return this.http.post(END_POINT_URL + '/message/ListApplications', {});
   }
 }
