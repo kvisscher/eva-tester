@@ -1,0 +1,18 @@
+:root {
+    --bg-color: rgba(0, 0, 0, 0.8);
+    --dark-green: #00701a;
+}
+
+:root.light {
+  --bg-color: whitesmoke;
+}
+
+/* You can add global styles to this file, and also import other style files */
+body {
+  background-color: var(--bg-color);
+  margin: 0;
+}
+
+button:focus {
+  outline: none;
+}
