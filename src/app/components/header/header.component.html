@@ -1,0 +1,7 @@
+<mat-form-field>
+  <mat-select placeholder="Choose application" [ngModel]="selectedApplication" (ngModelChange)="applicationChange($event)">
+    <mat-option *ngFor="let application of applications$ | async" [value]="application">
+      {{application.Name}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
