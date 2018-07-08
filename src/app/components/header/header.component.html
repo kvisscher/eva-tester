@@ -1,7 +1,33 @@
-<mat-form-field>
-  <mat-select placeholder="Choose application" [ngModel]="selectedApplication" (ngModelChange)="applicationChange($event)">
-    <mat-option *ngFor="let application of applications$ | async" [value]="application">
-      {{application.Name}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+
+<div @slideUpDown *ngIf="showLoginForm" class="d-flex justify-content-center login-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onLoginFormSubmit(loginForm.value)">
+      <mat-form-field class="w-100">
+        <input matInput placeholder="Username" formControlName="username" autocomplete="email">
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <input matInput type="password" placeholder="Password" formControlName="password" autocomplete="current-password">
+      </mat-form-field>
+
+      <button mat-button class="d-block mx-auto" [disabled]="loginForm.invalid">Login</button>
+  </form>
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+
+  <img src="./assets/images/eva.svg" alt="eva logo">
+
+  <div class="d-flex align-items-center justify-content-end">
+      <button mat-button class="mx-3" (click)="showLoginForm = true" *ngIf="!(user$ | async)" [disabled]="!applicationIsSelected">Authenticate</button>
+      <button mat-button class="mx-3" (click)="logout()" *ngIf="user$ | async">Logout</button>
+      <mat-form-field>
+        <mat-select placeholder="Choose application" [ngModel]="selectedApplicationId" (ngModelChange)="applicationChange($event)">
+          <mat-option *ngFor="let application of applications$ | async" [value]="application.ID">
+            {{application.Name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+
+
+</div>

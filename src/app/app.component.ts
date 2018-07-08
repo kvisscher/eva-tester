@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { settings, listApplicationCultures, store, getOrganizationUnit, login } from '@springtree/eva-sdk-redux';
-import { isNil } from 'lodash';
-import { filter, retry, retryWhen, tap } from 'rxjs/operators';
+import { Component, HostListener } from '@angular/core';
+import { getOrganizationUnit, listApplicationCultures, login, settings, store } from '@springtree/eva-sdk-redux';
+import { isEmpty, isNil } from 'lodash';
 import { defer } from 'rxjs/observable/defer';
+import { filter, first, retry, retryWhen, tap } from 'rxjs/operators';
 import { NgxEditorModel } from './components/editor';
 import { ILoggable, Logger } from './decorators/logger';
 import { EvaTypingsService } from './services/eva-typings.service';
+import { ListServicesService } from './services/list-services.service';
 import { bootstrapStore, IEnvironment } from './shared/bootstrap-store';
 
 @Logger
@@ -38,7 +39,9 @@ export class AppComponent implements ILoggable {
     theme: 'vs-dark'
   };
 
-  constructor(private $evaTypings: EvaTypingsService) {
+  constructor(
+    private $evaTypings: EvaTypingsService,
+    private $listServices: ListServicesService) {
     // You want to fetch the typings and store them somewhere (indexdb, localstorage?), after doing so
     // you want the editor to use those typings as part of the code.
     //
@@ -102,18 +105,36 @@ export class AppComponent implements ILoggable {
           [
             login.createFetchAction({
               Username: 'eva@springtree.nl',
+              Password: 'Spring2017',
               RegisterApiKey: true,
-              SelectOrganizationByApplicationID: true
+              SelectOrganizationByApplicationID: true,
+              OrganizationUnitID: 985, // <= comes from list application
+              ApplicationID: 13 // <== comes from list application
             }),
             listApplicationCultures.createFetchAction(),
-            getOrganizationUnit.createFetchAction(), // <== needs to be replaced by a getOrganizationUnitForUser
-          ].forEach((action) => {
+            getOrganizationUnit.createFetchAction({
+              OrganizationUnitID: 985
+            }), // <== needs to be replaced by a getOrganizationUnitForUser
+          ].forEach((action, index) => {
+            if ( !isEmpty(settings.userToken) && index === 0 ) {
+              // If we already have a user token, return early
+              //
+              return;
+            }
             store.dispatch(action[0]);
           });
+
+          this.$listServices.fetch().pipe(first()).subscribe();
         }
       });
     } catch (e) {
       this.logger.error('failed to fetch environment file');
     }
+  }
+
+  @HostListener('window:keyup.shift.p', ['$event']) shiftP(e: KeyboardEvent) {
+    e.preventDefault();
+
+    this.logger.log('open spotlight');
   }
 }

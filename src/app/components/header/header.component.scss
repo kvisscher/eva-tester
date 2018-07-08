@@ -1,6 +1,21 @@
 :host {
-  width: 100vw;
   border-bottom: 5px solid var(--dark-green);
-  height: 100px;
   display: block;
+  padding: 16px;
+  color: white;
+}
+
+.login-container {
+  border-bottom: 5px solid white;
+  margin-bottom: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  margin-right: -16px;
+  padding: 16px;
+  background: #1f1f1f;
+  overflow: hidden;
+}
+
+button {
+  height: 50px;
 }
