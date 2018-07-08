@@ -103,14 +103,6 @@ export class AppComponent implements ILoggable {
         error: error => this.logger.error('error bootstraping store', error),
         next: () => {
           [
-            login.createFetchAction({
-              Username: 'eva@springtree.nl',
-              Password: 'Spring2017',
-              RegisterApiKey: true,
-              SelectOrganizationByApplicationID: true,
-              OrganizationUnitID: 985, // <= comes from list application
-              ApplicationID: 13 // <== comes from list application
-            }),
             listApplicationCultures.createFetchAction(),
             getOrganizationUnit.createFetchAction({
               OrganizationUnitID: 985
@@ -123,8 +115,6 @@ export class AppComponent implements ILoggable {
             }
             store.dispatch(action[0]);
           });
-
-          this.$listServices.fetch().pipe(first()).subscribe();
         }
       });
     } catch (e) {
