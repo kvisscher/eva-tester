@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist",
+    "public": "dist/eva-tester",
     "ignore": [
       "firebase.json",
       "**/.*",
