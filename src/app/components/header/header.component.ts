@@ -7,6 +7,7 @@ import { ApplicationsService } from '../../services/applications.service';
 import { slideUpDown } from '../../shared/animations';
 import { login, store, getCurrentUser, logout } from '@springtree/eva-sdk-redux';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ListServicesService } from '../../services/list-services.service';
 
 interface ILoginFormValue {
   username: string;
@@ -56,7 +57,8 @@ export class HeaderComponent implements OnInit, ILoggable {
   constructor(
     private $applications: ApplicationsService,
     private formBuilder: FormBuilder,
-    public snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private $listServices: ListServicesService
   ) { }
 
   ngOnInit() {
@@ -109,6 +111,9 @@ export class HeaderComponent implements OnInit, ILoggable {
           this.snackBar.open(`Welcome ${response.User.FullName}`, null, {duration: 3000 });
 
           this.showLoginForm = false;
+          // Refetching the services
+          //
+          this.$listServices.fetch();
         break;
 
         default:
