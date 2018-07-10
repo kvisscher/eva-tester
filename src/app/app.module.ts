@@ -12,7 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
 
+
+import { FusejsModule } from 'angular-fusejs';
 
 
 import { ListServicesService } from './services/list-services.service';
@@ -21,6 +26,8 @@ import { ApplicationsService } from './services/applications.service';
 import { ServiceSelectorService } from './services/service-selector.service';
 import { TesterComponent } from './pages/tester/tester.component';
 import { HeaderComponent } from './components/header/header.component';
+import { ServicesSelectorComponent } from './pages/services-selector/services-selector.component';
+
 
 
 export const END_POINT_URL = 'https://api.test.eva-online.cloud';
@@ -29,7 +36,8 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
   declarations: [
     AppComponent,
     TesterComponent,
-    HeaderComponent
+    HeaderComponent,
+    ServicesSelectorComponent
   ],
   imports: [
     BrowserModule,
@@ -41,9 +49,13 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FusejsModule
   ],
   providers: [
     tokenInterceptor,

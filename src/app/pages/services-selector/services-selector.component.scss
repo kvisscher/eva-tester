@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  color: white;
+}
+
+mat-form-field {
+  width: 500px;
+}
+
+mat-checkbox {
+  display: block;
+}
+
+mat-card-title ::ng-deep em {
+  color: yellow;
+}
+
+form mat-card:hover {
+  cursor: pointer;
+}
+
+mat-card {
+  width: 650px;
+}

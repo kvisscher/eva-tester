@@ -1,0 +1,25 @@
+<div class="d-flex justify-content-center align-items-center my-2">
+  <form [formGroup]="searchForm" (ngSubmit)="createServices(servicesForm.value)">
+    <mat-form-field>
+      <input matInput type="search" placeholder="Search service" formControlName="search">
+    </mat-form-field>
+  </form>
+
+  <button mat-button [disabled]="!reducerIsSelected" (click)="createServices(servicesForm.value)">Create reducer</button>
+  <mat-spinner diameter=25 *ngIf="loading$ | async"></mat-spinner>
+</div>
+
+
+<div class="d-flex justify-content-center" *ngIf=" services$ | async; let services">
+  <form [formGroup]="servicesForm">
+    <mat-card *ngFor="let service of (services | fusejs:searchTerms:searchOptions)" (click)="programmaticallySelectFormControl(service.type)">
+       <mat-card-title class="d-flex justify-content-between" [attr.title]="service.name">
+          <span [innerHTML]="service.fuseJsHighlighted.name"></span>
+          <mat-checkbox [formControlName]="service.type" labelPosition="before" (click)="stopPropagation($event)">
+          </mat-checkbox>
+       </mat-card-title>
+       <mat-card-subtitle [attr.title]="service.type">{{ service.type }}</mat-card-subtitle>
+
+    </mat-card>
+  </form>
+</div>

@@ -13,6 +13,9 @@ body {
   margin: 0;
 }
 
-button:focus {
-  outline: none;
+button {
+  height: 50px;
+  &:focus {
+    outline: none;
+  }
 }
