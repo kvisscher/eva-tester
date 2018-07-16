@@ -1,3 +1,16 @@
-<p>
-  tester works!
-</p>
+<aside>
+  <form [formGroup]="searchForm">
+    <mat-form-field>
+      <input matInput placeholder="Search service" formControlName="search">
+    </mat-form-field>
+  </form>
+
+  <ng-container *ngIf=" services$ | async; let services">
+    <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
+      <button mat-button class="w-100">
+        <span [innerHTML]="service.fuseJsHighlighted.name"></span>
+      </button>
+    </ng-container>
+  </ng-container>
+
+</aside>
