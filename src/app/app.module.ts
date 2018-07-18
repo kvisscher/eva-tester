@@ -24,9 +24,10 @@ import { ListServicesService } from './services/list-services.service';
 import { tokenInterceptor } from './services/token-interceptor';
 import { ApplicationsService } from './services/applications.service';
 import { ServiceSelectorService } from './services/service-selector.service';
-import { TesterComponent } from './pages/tester/tester.component';
+import { TesterComponent } from './components/tester/tester.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ServicesSelectorComponent } from './pages/services-selector/services-selector.component';
+import { TesterTabsComponent } from './pages/tester-tabs/tester-tabs.component';
 
 
 
@@ -37,7 +38,8 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     AppComponent,
     TesterComponent,
     HeaderComponent,
-    ServicesSelectorComponent
+    ServicesSelectorComponent,
+    TesterTabsComponent
   ],
   imports: [
     BrowserModule,
