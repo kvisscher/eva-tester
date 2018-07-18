@@ -80,3 +80,36 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
  */
 
 (window as any).global = window;
+
+/**
+ * This is for monaco editor errors
+ * @see https://github.com/Microsoft/monaco-editor/issues/790#issuecomment-378452532
+ */
+Promise.all = function (values: any): Promise<any> {
+    let resolve: (v: any) => void;
+    let reject: (v: any) => void;
+    const promise = new this((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    let count = 0;
+    let index = 0;
+    const resolvedValues: any[] = [];
+    for (let value of values) {
+      if (!(value && value.then)) {
+        value = this.resolve(value);
+      }
+      value.then(( (i) => (val: any) => {
+            resolvedValues[i] = val;
+            count--;
+            if (!count) {
+                resolve(resolvedValues);
+            }
+          })(index),
+          reject);
+      count++;
+      index++;
+    }
+    if (!count) { resolve(resolvedValues); }
+    return promise;
+};
