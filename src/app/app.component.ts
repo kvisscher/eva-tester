@@ -1,9 +1,8 @@
 import { Component, HostListener } from '@angular/core';
-import { getOrganizationUnit, listApplicationCultures, login, settings, store } from '@springtree/eva-sdk-redux';
+import { getOrganizationUnit, listApplicationCultures, settings, store } from '@springtree/eva-sdk-redux';
 import { isEmpty, isNil } from 'lodash';
 import { defer } from 'rxjs/observable/defer';
-import { filter, first, retry, retryWhen, tap } from 'rxjs/operators';
-import { NgxEditorModel } from './components/editor';
+import { filter, retry, retryWhen, tap } from 'rxjs/operators';
 import { ILoggable, Logger } from './decorators/logger';
 import { EvaTypingsService } from './services/eva-typings.service';
 import { ListServicesService } from './services/list-services.service';
@@ -18,54 +17,9 @@ export class AppComponent implements ILoggable {
 
   public logger: Partial<Console>;
 
-  code = [
-  'interface IFoo {',
-  '  name: string',
-  '}',
-  ].join('\n');
-
-  jsonCode = [
-  '{',
-  '}'
-].join('\n');
-
-  model: NgxEditorModel = {
-    value: this.jsonCode,
-    language: 'json',
-    uri: 'internal://server/foo.json'
-  };
-
-  options = {
-    theme: 'vs-dark'
-  };
-
-  constructor(
-    private $evaTypings: EvaTypingsService,
-    private $listServices: ListServicesService) {
-    // You want to fetch the typings and store them somewhere (indexdb, localstorage?), after doing so
-    // you want the editor to use those typings as part of the code.
-    //
-
+  constructor() {
     this.initializeStore();
   }
-
-  monacoLoad() {
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-      schemas: [{
-        uri: null,
-        fileMatch: ['foo.json'],
-        schema: {
-          type: 'object',
-          properties: {
-            p1: {
-              enum: ['v1', 'v2']
-            }
-          }
-        }
-      }]
-    });
-  }
-
 
   async initializeStore() {
 
