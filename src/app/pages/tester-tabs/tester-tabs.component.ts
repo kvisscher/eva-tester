@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TesterTabsComponent implements OnInit {
 
-  public tabs = ['Service 1', 'Service 2', 'Service 3'];
+  public tabs = ['Service 1'];
 
   constructor() { }
 
