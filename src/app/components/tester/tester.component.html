@@ -8,7 +8,7 @@
 
     <ng-container *ngIf=" services$ | async; let services">
       <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
-        <button mat-button class="w-100" (click)="selectService()">
+        <button mat-button class="w-100" (click)="selectService(service)">
           <span [innerHTML]="service.fuseJsHighlighted.name"></span>
         </button>
       </ng-container>
@@ -18,7 +18,12 @@
   <div class="col-12 col-md-8">
     <eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
 
-    <button (click)="compileEditorInput()">compiler</button>
+    <button mat-button (click)="compileEditorInput()">Submit</button>
+
+    <pre>{{
+      compileOutput
+    }}
+    </pre>
 
   </div>
 
