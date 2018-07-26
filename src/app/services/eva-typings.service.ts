@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Logger, ILoggable } from '../decorators/logger';
 
 /** Represent the end point we will be fetching the typings from */
-export const TYPINGS_END_POINT = 'https://api.test.eva-online.cloud/api/definition/typescript';
+export const TYPINGS_END_POINT = 'https://api.test.eva-online.cloud';
 
 /**
  * This service will be responsible for fetching the eva-typings, it will also store them in indexdb
@@ -20,7 +20,9 @@ export class EvaTypingsService implements ILoggable {
   }
 
   load() {
-    return this.http.get<string>('https://api.test.eva-online.cloud/api/definition/typescript');
+    return this.http.get<string>(`${TYPINGS_END_POINT}/api/definition/typescript?useDeclareModule=true`, {
+      responseType: 'text' as any
+    });
   }
 
   /** Caches the typings */
