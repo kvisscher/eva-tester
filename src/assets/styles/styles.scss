@@ -1,6 +1,7 @@
 :root {
     --bg-color: rgba(0, 0, 0, 0.8);
     --dark-green: #00701a;
+    --header-height: 100px;
 }
 
 :root.light {
@@ -17,4 +18,9 @@ button {
   &:focus {
     outline: none;
   }
+}
+
+router-outlet {
+  display: block;
+  margin-top: var(--header-height);
 }
