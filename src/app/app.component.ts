@@ -1,10 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { getOrganizationUnit, listApplicationCultures, settings, store } from '@springtree/eva-sdk-redux';
-import { isEmpty, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import { defer } from 'rxjs/observable/defer';
 import { filter, retry, retryWhen, tap } from 'rxjs/operators';
 import { ILoggable, Logger } from './decorators/logger';
-import { EvaTypingsService } from './services/eva-typings.service';
 import { ListServicesService } from './services/list-services.service';
 import { bootstrapStore, IEnvironment } from './shared/bootstrap-store';
 
@@ -17,7 +16,7 @@ export class AppComponent implements ILoggable {
 
   public logger: Partial<Console>;
 
-  constructor() {
+  constructor(private $listServices: ListServicesService) {
     this.initializeStore();
   }
 
@@ -56,29 +55,26 @@ export class AppComponent implements ILoggable {
       .subscribe({
         error: error => this.logger.error('error bootstraping store', error),
         next: () => {
-          [
+          const actions = [
             listApplicationCultures.createFetchAction(),
             getOrganizationUnit.createFetchAction({
               OrganizationUnitID: 985
             }), // <== needs to be replaced by a getOrganizationUnitForUser
-          ].forEach((action, index) => {
-            if ( !isEmpty(settings.userToken) && index === 0 ) {
-              // If we already have a user token, return early
-              //
-              return;
-            }
-            store.dispatch(action[0]);
-          });
+          ];
+
+          actions.forEach( action => store.dispatch(action[0]) );
+
+          const promises: Promise<any>[] = actions.map( action => {
+            const promise = action[1];
+
+            return promise;
+          } );
+
+          Promise.all(promises).then(() => this.$listServices.fetch() );
         }
       });
     } catch (e) {
       this.logger.error('failed to fetch environment file');
     }
-  }
-
-  @HostListener('window:keyup.shift.p', ['$event']) shiftP(e: KeyboardEvent) {
-    e.preventDefault();
-
-    this.logger.log('open spotlight');
   }
 }
