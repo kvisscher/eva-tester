@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { TYPINGS_END_POINT } from './eva-typings.service';
 
-/**
- * The side menu showing all the available services needs to have a way to communicate with the active tab
- * */
 @Injectable()
 export class ServiceSelectorService {
 
-  constructor() { }
+  constructor(private http: HttpClient ) { }
+
+  fetch( serviceType: string ) {
+    return this.http.get(TYPINGS_END_POINT + '/tester/api/services/' + serviceType);
+  }
 }
