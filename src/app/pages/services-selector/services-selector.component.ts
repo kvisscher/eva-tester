@@ -64,8 +64,6 @@ export class ServicesSelectorComponent implements OnInit {
   ) {
     this.portNumber = this.route.snapshot.params['portNumber'];
 
-    this.$listServices.fetch();
-
     this.searchForm.get('search')
     .valueChanges
     .pipe( debounceTime(300) )
