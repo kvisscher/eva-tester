@@ -19,7 +19,7 @@
 
   <div class="d-flex align-items-center justify-content-end">
       <button mat-button class="mx-3"
-        [class.outline]="!(user$ | async)"
+        [class.outline]="noUser$ | async"
         (click)="showLoginForm = true"
         *ngIf="!(user$ | async)"
         [disabled]="!applicationIsSelected">

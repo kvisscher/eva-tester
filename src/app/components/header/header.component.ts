@@ -1,13 +1,14 @@
 import { Component, HostListener, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { get, isNil } from 'lodash';
-import { first, map } from 'rxjs/operators';
+import { first, map, filter, withLatestFrom } from 'rxjs/operators';
 import { ILoggable, Logger } from '../../decorators/logger';
 import { ApplicationsService } from '../../services/applications.service';
 import { slideUpDown } from '../../shared/animations';
 import { login, store, getCurrentUser, logout } from '@springtree/eva-sdk-redux';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ListServicesService } from '../../services/list-services.service';
+import { Observable } from 'rxjs/Observable';
 
 interface ILoginFormValue {
   username: string;
@@ -53,6 +54,12 @@ export class HeaderComponent implements OnInit, ILoggable {
   public showLoginForm = false;
 
   public user$ = getCurrentUser.getLoggedInUser$();
+
+  public noUser$: Observable<boolean> = getCurrentUser.getState$().pipe(
+    filter(state => !state.isFetching),
+    withLatestFrom(getCurrentUser.getLoggedInUser$()),
+    map(([_currentUser, currentLoggedInUser]) => !Boolean(currentLoggedInUser))
+  );
 
   constructor(
     private $applications: ApplicationsService,
