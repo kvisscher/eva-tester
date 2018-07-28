@@ -25,6 +25,7 @@ import { ListServicesService } from './services/list-services.service';
 import { ServiceSelectorService } from './services/service-selector.service';
 import { tokenInterceptor } from './services/token-interceptor';
 import { CommandPaletteComponent } from './components/command-palette/command-palette.component';
+import { ServiceTesterComponent } from './components/service-tester/service-tester.component';
 
 export const END_POINT_URL = 'https://api.test.eva-online.cloud';
 
@@ -35,12 +36,14 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     HeaderComponent,
     ServicesSelectorComponent,
     TesterTabsComponent,
-    CommandPaletteComponent
+    CommandPaletteComponent,
+    ServiceTesterComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot([
       { path: '', component: TesterTabsComponent },
+      { path: 'service/:serviceName', component: ServiceTesterComponent },
       { path: 'selector/:portNumber', component: ServicesSelectorComponent }
     ]),
     MonacoEditorModule.forRoot(),
