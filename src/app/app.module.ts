@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -17,6 +18,7 @@ import { RouterModule } from '@angular/router';
 import { FusejsModule } from 'angular-fusejs';
 import { AppComponent } from './app.component';
 import { CommandPaletteComponent } from './components/command-palette/command-palette.component';
+import { EasterEggComponent, EasterEggDialogComponent } from './components/easter-egg/easter-egg.component';
 import { MonacoEditorModule } from './components/editor';
 import { HeaderComponent } from './components/header/header.component';
 import { MarkdownHtmlComponent } from './components/markdown-html/markdown-html.component';
@@ -42,7 +44,9 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     TesterTabsComponent,
     CommandPaletteComponent,
     ServiceTesterComponent,
-    MarkdownHtmlComponent
+    MarkdownHtmlComponent,
+    EasterEggComponent,
+    EasterEggDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -66,8 +70,10 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     MatSnackBarModule,
     FusejsModule,
     MatChipsModule,
+    MatDialogModule,
     MatIconModule
   ],
+  entryComponents: [EasterEggDialogComponent],
   providers: [
     tokenInterceptor,
     EvaTypingsService,
