@@ -1,0 +1,19 @@
+:host {
+  color: white;
+  overflow: scroll;
+  padding: 16px;
+  display: block;
+}
+
+h1, h6 {
+  font-family: 'Roboto Mono',monospace;
+}
+
+
+h6 {
+  opacity: 0.54;
+}
+
+mat-chip-list ::ng-deep .mat-chip-list-wrapper {
+  align-items: center !important;
+}

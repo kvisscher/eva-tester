@@ -1,8 +1,30 @@
-<eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+<ng-container *ngIf="currentService">
+  <h1>
+    <div class="row no-gutters justify-content-between align-items-center">
+      <span>{{ serviceListItem.name }}</span>
+      <span>
+        <mat-chip-list>
+          <mat-chip [@listAnimation]="currentService.security.requiredUserType" *ngFor="let functionality of currentService.security.requiredUserType" selected color="primary">
+          {{ functionality }}
+          </mat-chip>
+          <mat-chip color="accent">
+            <ng-container *ngIf="currentService.security.requiresAuthentication">
+              <mat-icon>lock</mat-icon>
+            </ng-container>
+            <ng-container *ngIf="currentService.security.requiresAuthentication === false">
+              <mat-icon>lock_open</mat-icon>
+            </ng-container>
+          </mat-chip>
+        </mat-chip-list>
+      </span>
+    </div>
+  </h1>
+  <h6>{{ serviceListItem.type }}</h6>
 
-<button mat-button (click)="compileEditorInput()">Submit</button>
+  <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
 
-<pre>{{
-  compileOutput
-}}
-</pre>
+  <eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+
+  <button mat-button (click)="compileEditorInput()">Submit</button>
+
+</ng-container>

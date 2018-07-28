@@ -1,70 +1,106 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxEditorModel } from '../../components/editor';
 import { EvaTypingsService } from '../../services/eva-typings.service';
-import { ListServicesService } from '../../services/list-services.service';
-import { ServiceSelectorService } from '../../services/service-selector.service';
+import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
+import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
 import { EditorComponent } from '../editor/editor.component';
+import { tap, filter, first } from 'rxjs/operators';
+import { listAnimation } from '../../shared/animations';
 
 /** This component will show the tester for a given service, it can do so with meta data fetched from the /tester/api/services/ end point */
 @Component({
   selector: 'eva-service-tester',
   templateUrl: './service-tester.component.html',
-  styleUrls: ['./service-tester.component.scss']
+  styleUrls: ['./service-tester.component.scss'],
+  animations: [listAnimation]
 })
 export class ServiceTesterComponent implements OnInit {
 
-  private _currentServiceName: any;
+  private _serviceListeItem: IListServiceItem;
 
-  public get currentServiceName(): any {
-    return this._currentServiceName;
+  public get serviceListItem(): IListServiceItem {
+    return this._serviceListeItem;
   }
 
   @Input()
-  public set currentServiceName(value: any) {
-    if ( value !== this._currentServiceName ) {
+  public set serviceListItem(value: IListServiceItem) {
+    if ( value !== this._serviceListeItem ) {
       this.onServiceChange(value);
 
-      this._currentServiceName = value;
+      this._serviceListeItem = value;
     }
   }
 
+  public currentService: IServiceResponse;
+
   @ViewChild(EditorComponent) monacoEditor: EditorComponent;
 
+  /** This will help us compile different files in the future, when we add tabs support */
   public uniqueURI = `index-${Math.random()}.ts`;
 
   public monacoModel: NgxEditorModel = {
-    value: this.createCodeTemplate('EVA.Core.Services.UpdateUser'),
+    value: null,
     language: 'typescript',
     uri: this.uniqueURI
   };
 
   public monacoOptions = {
-    theme: 'vs-dark'
+    theme: 'vs-dark',
+    minimap: {
+      enabled: false
+    }
   };
 
-  public compileOutput: string;
-
   constructor(
-    private $listServices: ListServicesService,
     private $evaTypings: EvaTypingsService,
     private $serviceSelector: ServiceSelectorService,
-    private route: ActivatedRoute
+    private $listServices: ListServicesService,
+    private route: ActivatedRoute,
+    private zone: NgZone
   ) {
-    this.route.params.subscribe( params => {
+
+    this.route.params.pipe(
+      filter( params => Boolean((params as any).serviceName) )
+    )
+    .subscribe( params => {
       // Updating the current service
       //
-      this.currentServiceName = params.serviceName;
+      const serviceName: string = params.serviceName as string;
+
+      this.$listServices.services$.pipe(
+        tap( services => {
+          if ( !services ) {
+            this.$listServices.fetch();
+          }
+        })
+      ).subscribe( services => {
+        const matchingService = services.find( service => service.name.toLowerCase() === serviceName.toLowerCase()  );
+
+        this.serviceListItem = matchingService;
+      } );
+
     });
   }
 
   ngOnInit() { }
 
   /** Whenever a service is selected, we will fetch it and create a code template */
-  onServiceChange(value: any) {
-    const newEditorValue = this.createCodeTemplate(value.request.ns + '.' + value.request.type);
+  onServiceChange(service: IListServiceItem) {
+    this.$serviceSelector.fetch(service.type).subscribe( async value => {
+      this.currentService = value;
 
-    this.monacoEditor.writeValue(newEditorValue);
+      const newEditorValue = this.createCodeTemplate(value.request.ns + '.' + value.request.type);
+      if ( this.monacoModel ) {
+        this.monacoModel.value = newEditorValue;
+      } else {
+        this.monacoModel = {
+          value: newEditorValue,
+          language: 'typescript',
+          uri: this.uniqueURI
+        };
+      }
+    });
   }
 
 
@@ -84,7 +120,7 @@ export class ServiceTesterComponent implements OnInit {
     //   }]
     // });
 
-    // Whenever the editor loads, we want to fetch the typings a
+    // Whenever the editor loads, we want to fetch the typings
     //
     this.$evaTypings.load().subscribe(typings => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(typings, 'eva.d.ts');
@@ -115,24 +151,26 @@ export class ServiceTesterComponent implements OnInit {
     const codeWithoutParentheses = matchingOutput.text.replace('(', '').replace(')', '');
 
     /**
-     * we want to split the code on new line and replace the first line with a {
-     * and remove the rest 'const request' part
-     */
-    const splitCode = matchingOutput.text.split('\n');
+    //  * we want to split the code on new line and replace the first line with a {
+    //  * and remove the rest 'const request' part
+    //  */
+    // const splitCode = matchingOutput.text.split('\n');
 
-    // Replacing the first line with an opening brace
-    splitCode[0] = '{';
+    // // Replacing the first line with an opening brace
+    // splitCode[0] = '{';
 
     // Joining the js object array and removing the semicolon so its valid json
     //
-    const jsObject: string = splitCode.join('').replace(';', '');
+    const jsObject: string = matchingOutput.text
+      .replace('const request =', '') // getting rid of the assignemnt
+      .replace(';', ''); // getting rid of the semicolon
 
     // tslint:disable-next-line:no-eval
     const jsonObject: Object = eval(`(${jsObject})`);
 
     const jsonString: string = JSON.stringify(jsonObject);
 
-    this.compileOutput = jsonString;
+    return jsonString;
   }
 
   /** Returns the template that casts an empty object to a given eva type */
