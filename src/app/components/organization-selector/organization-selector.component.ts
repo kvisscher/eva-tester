@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { getOrganizationUnitsForUser, login, settings, store } from '@springtree/eva-sdk-redux';
-import { map, first, delay } from 'rxjs/operators';
+import { map, first, delay, pairwise } from 'rxjs/operators';
 import isNotNil from '../../shared/operators/is-not-nil';
 import { Logger, ILoggable } from '../../decorators/logger';
 
@@ -47,27 +47,32 @@ export class OrganizationSelectorComponent implements OnInit, ILoggable {
     }
 
     this.form.get('organization').valueChanges
-    .pipe(delay(200))
-    .subscribe( async (organizationId: number) => {
-      this.switchOrganization(organizationId);
+    .pipe(
+      delay(500)
+    )
+    .subscribe(async (newOrganizationId) => {
+      this.switchOrganization(newOrganizationId);
     });
   }
 
-  async switchOrganization(organizationId: number) {
+  async switchOrganization(newOrganizationId: number) {
 
     const confirmed = confirm('Are you sure you want to switch organization?');
 
     if ( !confirmed ) {
+      // Resetting control value
+      //
+      this.form.get('organization').setValue(this.selectedOrganization.ID, { emitEvent: false });
       return;
     }
 
     const organizations = await this.organizations$.pipe(first()).toPromise();
 
-    const selectedOrganization = organizations.find(organization => organization.ID === organizationId);
+    const selectedOrganization = organizations.find(organization => organization.ID === newOrganizationId);
 
     const [action, fetchPromise] = login.createFetchAction({
       AuthenticationToken: settings.userToken,
-      OrganizationUnitID: organizationId
+      OrganizationUnitID: newOrganizationId
     });
 
     store.dispatch(action);
