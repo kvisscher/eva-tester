@@ -8,6 +8,14 @@ import { EditorComponent } from '../editor/editor.component';
 import { tap, filter, first } from 'rxjs/operators';
 import { listAnimation, fadeInOut } from '../../shared/animations';
 import { FormBuilder } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { END_POINT_URL } from '../../app.module';
+
+enum ESelectedTabIndex {
+  REQUEST = 0,
+  RESPONSE = 1
+}
+
 
 /** This component will show the tester for a given service, it can do so with meta data fetched from the /tester/api/services/ end point */
 @Component({
@@ -35,6 +43,8 @@ export class ServiceTesterComponent implements OnInit {
 
   public currentService: IServiceResponse;
 
+  public loading = false;
+
   @ViewChild(EditorComponent) monacoEditor: EditorComponent;
 
   /** This will help us compile different files in the future, when we add tabs support */
@@ -57,12 +67,18 @@ export class ServiceTesterComponent implements OnInit {
     editor: [null]
   });
 
+  /** Response of the service */
+  public response: any;
+
+  public selectedIndex = ESelectedTabIndex.REQUEST;
+
   constructor(
     private $evaTypings: EvaTypingsService,
     private $serviceSelector: ServiceSelectorService,
     private $listServices: ListServicesService,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private http: HttpClient
   ) {
 
     this.route.params.pipe(
@@ -83,7 +99,7 @@ export class ServiceTesterComponent implements OnInit {
         const matchingService = services.find( service => service.name.toLowerCase() === serviceName.toLowerCase()  );
 
         this.serviceListItem = matchingService;
-      } );
+      });
 
     });
   }
@@ -92,9 +108,12 @@ export class ServiceTesterComponent implements OnInit {
 
   /** Whenever a service is selected, we will fetch it and create a code template */
   onServiceChange(service: IListServiceItem) {
-    this.currentService = null;
+
+    this.loading = true;
 
     this.$serviceSelector.fetch(service.type).subscribe( async value => {
+      this.loading = false;
+
       this.currentService = value;
 
       const newEditorValue = this.createCodeTemplate(value.request.ns + '.' + value.request.type);
@@ -124,6 +143,19 @@ export class ServiceTesterComponent implements OnInit {
     //
     this.$evaTypings.load().subscribe(typings => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(typings, 'eva.d.ts');
+    });
+  }
+
+  async preformRequest() {
+    const request: any = await this.compileEditorInput();
+
+    // To:do take Accept-Language into account, when the culture selector is built
+    //
+    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, request ).subscribe( response => {
+
+      this.selectedIndex = ESelectedTabIndex.RESPONSE;
+
+      this.response = response;
     });
   }
 

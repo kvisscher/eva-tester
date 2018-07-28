@@ -1,4 +1,4 @@
-<mat-spinner *ngIf="!currentService" @fadeInOut [diameter]="30"></mat-spinner>
+<mat-spinner *ngIf="loading" @fadeInOut [diameter]="30"></mat-spinner>
 
 <ng-container *ngIf="currentService">
   <h1>
@@ -28,9 +28,23 @@
   <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
 </ng-container>
 
+<mat-tab-group [selectedIndex]="selectedIndex">
+  <mat-tab label="Request">
+    <form [formGroup]="form">
+      <eva-monaco-editor [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+    </form>
 
-<form [formGroup]="form">
-  <eva-monaco-editor [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
-</form>
+    <div class="row justify-content-end">
+      <button mat-button (click)="preformRequest()">Submit</button>
+    </div>
 
-<button mat-button (click)="compileEditorInput()">Submit</button>
+  </mat-tab>
+
+  <mat-tab label="Response" [disabled]="!response">
+    <eva-json-formatter [json]="response"></eva-json-formatter>
+  </mat-tab>
+</mat-tab-group>
+
+
+
+
