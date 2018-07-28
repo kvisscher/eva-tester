@@ -150,15 +150,6 @@ export class ServiceTesterComponent implements OnInit {
 
     const codeWithoutParentheses = matchingOutput.text.replace('(', '').replace(')', '');
 
-    /**
-    //  * we want to split the code on new line and replace the first line with a {
-    //  * and remove the rest 'const request' part
-    //  */
-    // const splitCode = matchingOutput.text.split('\n');
-
-    // // Replacing the first line with an opening brace
-    // splitCode[0] = '{';
-
     // Joining the js object array and removing the semicolon so its valid json
     //
     const jsObject: string = matchingOutput.text
