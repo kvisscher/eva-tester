@@ -114,6 +114,8 @@ export class ServiceTesterComponent implements OnInit {
   /** Whenever a service is selected, we will fetch it and create a code template */
   onServiceChange(service: IListServiceItem) {
 
+    this.response = null;
+
     this.loading = true;
 
     this.$serviceSelector.fetch(service.type).subscribe( async value => {
