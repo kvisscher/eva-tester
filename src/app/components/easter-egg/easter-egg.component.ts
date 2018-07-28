@@ -49,8 +49,6 @@ export class EasterEggComponent implements OnInit {
     //
     if ( randomWeight === 1000 ) {
       this.setupEasterEgg();
-    } else {
-      console.log('another time...', randomWeight);
     }
 
   }
