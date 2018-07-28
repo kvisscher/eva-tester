@@ -1,5 +1,6 @@
 :host {
-  height: calc(100vh - 100px);
+  // 49 (tabs height + 100 header height )
+  height: calc(100vh - 149px);
   display: block;
 }
 
