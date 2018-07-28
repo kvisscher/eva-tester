@@ -34,8 +34,8 @@
       <eva-monaco-editor [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
     </form>
 
-    <div class="row justify-content-end">
-      <button mat-button (click)="preformRequest()">Submit</button>
+    <div class="no-gutters row justify-content-end">
+      <button mat-button (click)="preformRequest()" [disabled]="!moancoLoaded">Submit</button>
     </div>
 
   </mat-tab>
