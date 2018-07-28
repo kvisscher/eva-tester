@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { END_POINT_URL } from '../../app.module';
 import { HttpHeaders } from '@angular/common/http';
 import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
+import { settings } from '@springtree/eva-sdk-redux';
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -165,7 +166,10 @@ export class ServiceTesterComponent implements OnInit {
 
     // To:do take Accept-Language into account, when the culture selector is built
     //
-    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, request, httpOptions )
+    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, {
+      ...request,
+      SessionID: settings.sessionId
+    }, httpOptions )
     .pipe(first())
     .toPromise()
     .then( response => {
