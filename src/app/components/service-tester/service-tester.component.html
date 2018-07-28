@@ -2,11 +2,13 @@
   <h1>
     <div class="row no-gutters justify-content-between align-items-center">
       <span>{{ serviceListItem.name }}</span>
-      <span>
-        <mat-chip-list>
-          <mat-chip [@listAnimation]="currentService.security.requiredUserType" *ngFor="let functionality of currentService.security.requiredUserType" selected color="primary">
+      <div class="d-flex align-items-center">
+        <mat-chip-list class="mr-2" [@listAnimation]="currentService.security.requiredUserType.length">
+          <mat-chip *ngFor="let functionality of currentService.security.requiredUserType" selected color="primary">
           {{ functionality }}
           </mat-chip>
+        </mat-chip-list>
+        <mat-chip-list>
           <mat-chip color="accent">
             <ng-container *ngIf="currentService.security.requiresAuthentication">
               <mat-icon>lock</mat-icon>
@@ -16,7 +18,7 @@
             </ng-container>
           </mat-chip>
         </mat-chip-list>
-      </span>
+      </div>
     </div>
   </h1>
   <h6>{{ serviceListItem.type }}</h6>
