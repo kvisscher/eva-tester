@@ -26,13 +26,14 @@
         Authenticate
       </button>
       <button mat-button class="mx-3" (click)="logout()" *ngIf="user$ | async">Logout</button>
-      <mat-form-field>
+      <mat-form-field  *ngIf="!(user$ | async)">
         <mat-select placeholder="Choose application" [ngModel]="selectedApplicationId" (ngModelChange)="applicationChange($event)">
           <mat-option *ngFor="let application of applications$ | async" [value]="application.ID">
             {{application.Name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <eva-organization-selector *ngIf="user$ | async" class="mx-2 d-block"></eva-organization-selector>
   </div>
 
 

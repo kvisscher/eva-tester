@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { getOrganizationUnit, listApplicationCultures, settings, store } from '@springtree/eva-sdk-redux';
+import { getOrganizationUnit, listApplicationCultures, settings, store, getOrganizationUnitsForUser } from '@springtree/eva-sdk-redux';
 import { isNil } from 'lodash';
 import { defer } from 'rxjs/observable/defer';
 import { filter, retry, retryWhen, tap } from 'rxjs/operators';
@@ -57,9 +57,7 @@ export class AppComponent implements ILoggable {
         next: () => {
           const actions = [
             listApplicationCultures.createFetchAction(),
-            getOrganizationUnit.createFetchAction({
-              OrganizationUnitID: 985
-            }), // <== needs to be replaced by a getOrganizationUnitForUser
+            getOrganizationUnitsForUser.createFetchAction()
           ];
 
           actions.forEach( action => store.dispatch(action[0]) );
