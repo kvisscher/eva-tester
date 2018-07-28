@@ -1,3 +1,5 @@
+<mat-spinner *ngIf="!currentService" @fadeInOut [diameter]="30"></mat-spinner>
+
 <ng-container *ngIf="currentService">
   <h1>
     <div class="row no-gutters justify-content-between align-items-center">
@@ -24,9 +26,9 @@
   <h6>{{ serviceListItem.type }}</h6>
 
   <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
-
-  <eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
-
+  <form [formGroup]="form">
+    <eva-monaco-editor [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+  </form>
   <button mat-button (click)="compileEditorInput()">Submit</button>
 
 </ng-container>

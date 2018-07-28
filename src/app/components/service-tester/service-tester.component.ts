@@ -6,14 +6,15 @@ import { IListServiceItem, ListServicesService } from '../../services/list-servi
 import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
 import { EditorComponent } from '../editor/editor.component';
 import { tap, filter, first } from 'rxjs/operators';
-import { listAnimation } from '../../shared/animations';
+import { listAnimation, fadeInOut } from '../../shared/animations';
+import { FormBuilder } from '@angular/forms';
 
 /** This component will show the tester for a given service, it can do so with meta data fetched from the /tester/api/services/ end point */
 @Component({
   selector: 'eva-service-tester',
   templateUrl: './service-tester.component.html',
   styleUrls: ['./service-tester.component.scss'],
-  animations: [listAnimation]
+  animations: [listAnimation, fadeInOut]
 })
 export class ServiceTesterComponent implements OnInit {
 
@@ -39,25 +40,25 @@ export class ServiceTesterComponent implements OnInit {
   /** This will help us compile different files in the future, when we add tabs support */
   public uniqueURI = `index-${Math.random()}.ts`;
 
-  public monacoModel: NgxEditorModel = {
-    value: null,
-    language: 'typescript',
-    uri: this.uniqueURI
-  };
-
   public monacoOptions = {
     theme: 'vs-dark',
     minimap: {
       enabled: false
-    }
+    },
+    language: 'typescript',
+    uri: this.uniqueURI
   };
+
+  public form = this.formBuilder.group({
+    editor: [null]
+  });
 
   constructor(
     private $evaTypings: EvaTypingsService,
     private $serviceSelector: ServiceSelectorService,
     private $listServices: ListServicesService,
     private route: ActivatedRoute,
-    private zone: NgZone
+    private formBuilder: FormBuilder
   ) {
 
     this.route.params.pipe(
@@ -87,19 +88,14 @@ export class ServiceTesterComponent implements OnInit {
 
   /** Whenever a service is selected, we will fetch it and create a code template */
   onServiceChange(service: IListServiceItem) {
+    this.currentService = null;
+
     this.$serviceSelector.fetch(service.type).subscribe( async value => {
       this.currentService = value;
 
       const newEditorValue = this.createCodeTemplate(value.request.ns + '.' + value.request.type);
-      if ( this.monacoModel ) {
-        this.monacoModel.value = newEditorValue;
-      } else {
-        this.monacoModel = {
-          value: newEditorValue,
-          language: 'typescript',
-          uri: this.uniqueURI
-        };
-      }
+
+      this.form.get('editor').setValue(newEditorValue);
     });
   }
 
@@ -147,8 +143,6 @@ export class ServiceTesterComponent implements OnInit {
     });
 
     console.log(matchingOutput);
-
-    const codeWithoutParentheses = matchingOutput.text.replace('(', '').replace(')', '');
 
     // Joining the js object array and removing the semicolon so its valid json
     //
