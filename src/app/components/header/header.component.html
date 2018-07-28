@@ -18,14 +18,18 @@
   <img src="./assets/images/eva.svg" alt="eva logo" routerLink=".">
 
   <div class="d-flex align-items-center justify-content-end">
-      <button mat-button class="mx-3"
+      <button mat-button class="mx-2"
         [class.outline]="noUser$ | async"
         (click)="showLoginForm = true"
         *ngIf="!(user$ | async)"
         [disabled]="!applicationIsSelected">
         Authenticate
       </button>
-      <button mat-button class="mx-3" (click)="logout()" *ngIf="user$ | async">Logout</button>
+      <button mat-button class="mx-2" (click)="logout()" *ngIf="user$ | async">Logout</button>
+      <button mat-button class="mx-2" [matTooltip]="currentSessionId" (click)="createNewSessionId()" *ngIf="user$ | async">
+        Session id
+        <mat-icon>refresh</mat-icon>
+      </button>
       <mat-form-field  *ngIf="!(user$ | async)">
         <mat-select placeholder="Choose application" [ngModel]="selectedApplicationId" (ngModelChange)="applicationChange($event)">
           <mat-option *ngFor="let application of applications$ | async" [value]="application.ID">

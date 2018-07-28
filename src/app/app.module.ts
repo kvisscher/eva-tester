@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -22,6 +23,7 @@ import { EasterEggComponent, EasterEggDialogComponent } from './components/easte
 import { MonacoEditorModule } from './components/editor';
 import { HeaderComponent } from './components/header/header.component';
 import { MarkdownHtmlComponent } from './components/markdown-html/markdown-html.component';
+import { OrganizationSelectorComponent } from './components/organization-selector/organization-selector.component';
 import { ServiceTesterComponent } from './components/service-tester/service-tester.component';
 import { TesterComponent } from './components/tester/tester.component';
 import { ServicesSelectorComponent } from './pages/services-selector/services-selector.component';
@@ -31,7 +33,6 @@ import { EvaTypingsService } from './services/eva-typings.service';
 import { ListServicesService } from './services/list-services.service';
 import { ServiceSelectorService } from './services/service-selector.service';
 import { tokenInterceptor } from './services/token-interceptor';
-import { OrganizationSelectorComponent } from './components/organization-selector/organization-selector.component';
 
 
 export const END_POINT_URL = 'https://api.test.eva-online.cloud';
@@ -73,7 +74,8 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     FusejsModule,
     MatChipsModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   entryComponents: [EasterEggDialogComponent],
   providers: [

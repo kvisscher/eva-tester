@@ -5,7 +5,7 @@ import { first, map, filter, withLatestFrom } from 'rxjs/operators';
 import { ILoggable, Logger } from '../../decorators/logger';
 import { ApplicationsService } from '../../services/applications.service';
 import { slideUpDown } from '../../shared/animations';
-import { login, store, getCurrentUser, logout } from '@springtree/eva-sdk-redux';
+import { login, store, getCurrentUser, logout, settings } from '@springtree/eva-sdk-redux';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ListServicesService } from '../../services/list-services.service';
 import { Observable } from 'rxjs/Observable';
@@ -43,6 +43,10 @@ export class HeaderComponent implements OnInit, ILoggable {
       first(),
       map( apps => apps.find( potentialApp => potentialApp.ID === this.selectedApplicationId) )
     ).toPromise();
+  }
+
+  public get currentSessionId(): string {
+    return settings.sessionId;
   }
 
   public loginForm = this.formBuilder.group({
@@ -112,7 +116,7 @@ export class HeaderComponent implements OnInit, ILoggable {
 
       switch ( response.Authentication ) {
         case 0:
-          this.snackBar.open('Failed to login, try again', null, { duration: 3000 })
+          this.snackBar.open('Failed to login, try again', null, { duration: 3000 });
         break;
         case 2:
           this.snackBar.open(`Welcome ${response.User.FullName}`, null, {duration: 3000 });
@@ -129,5 +133,11 @@ export class HeaderComponent implements OnInit, ILoggable {
     }).catch(() => {
       this.snackBar.open('Failed to login, try again', null, { duration: 3000 });
     });
+  }
+
+  createNewSessionId() {
+    settings.sessionId = settings.generateSessionId();
+
+    this.snackBar.open(`Session id changed to ${settings.sessionId}`, null, { duration: 3000 });
   }
 }
