@@ -27,7 +27,6 @@
     "core-js": "^2.5.4",
     "lodash": "^4.17.10",
     "monaco-editor": "^0.13.1",
-    "ngx-clipboard": "^11.1.1",
     "rxjs": "^5.6.0-forward-compat.0",
     "showdown": "^1.8.6",
     "zone.js": "^0.8.26"

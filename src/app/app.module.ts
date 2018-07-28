@@ -15,7 +15,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { FusejsModule } from 'angular-fusejs';
-import { ClipboardModule } from 'ngx-clipboard';
 import { AppComponent } from './app.component';
 import { CommandPaletteComponent } from './components/command-palette/command-palette.component';
 import { MonacoEditorModule } from './components/editor';
@@ -67,8 +66,7 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     MatSnackBarModule,
     FusejsModule,
     MatChipsModule,
-    MatIconModule,
-    ClipboardModule
+    MatIconModule
   ],
   providers: [
     tokenInterceptor,
