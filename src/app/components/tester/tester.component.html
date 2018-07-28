@@ -16,14 +16,7 @@
   </aside>
 
   <div class="col-12 col-md-8">
-    <eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
-
-    <button mat-button (click)="compileEditorInput()">Submit</button>
-
-    <pre>{{
-      compileOutput
-    }}
-    </pre>
+<eva-service-tester [currentServiceName]="selectedService"></eva-service-tester>
 
   </div>
 

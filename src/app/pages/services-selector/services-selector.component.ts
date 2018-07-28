@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { AngularFusejsOptions } from 'angular-fusejs';
-import { ListServicesService, IService } from '../../services/list-services.service';
-import { debounceTime, tap, map } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { settings } from '@springtree/eva-sdk-redux';
+import { AngularFusejsOptions } from 'angular-fusejs';
+import { debounceTime, map, tap } from 'rxjs/operators';
+import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
 
 interface IServicesFormValue {
   [type: string]: boolean;
@@ -81,7 +81,7 @@ export class ServicesSelectorComponent implements OnInit {
       .filter( el => values[el] === true );
 
     /** The entire service meta data the user chose, we want as much meta data about the service as possible */
-    const services: IService[] = this.$listServices.services$.value.filter( service => {
+    const services: IListServiceItem[] = this.$listServices.services$.value.filter( service => {
       return serviceTypes.includes(service.type);
     });
 

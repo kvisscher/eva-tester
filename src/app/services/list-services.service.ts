@@ -5,14 +5,14 @@ import { Logger, ILoggable } from '../decorators/logger';
 import { first } from '../../../node_modules/rxjs/operators';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-export interface IService {
+export interface IListServiceItem {
   name: string;
   ns: string;
   type: string;
 }
 
 interface ISericesResponse {
-  services: IService[];
+  services: IListServiceItem[];
 }
 
 @Logger
@@ -20,7 +20,7 @@ interface ISericesResponse {
 export class ListServicesService implements ILoggable {
   public logger: Partial<Console>;
 
-  public services$ = new BehaviorSubject<IService[]>([]);
+  public services$ = new BehaviorSubject<IListServiceItem[]>([]);
 
   constructor(private http: HttpClient) {}
 

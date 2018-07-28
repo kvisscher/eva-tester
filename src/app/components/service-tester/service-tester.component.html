@@ -1,0 +1,8 @@
+<eva-monaco-editor [options]="monacoOptions" [model]="monacoModel" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+
+<button mat-button (click)="compileEditorInput()">Submit</button>
+
+<pre>{{
+  compileOutput
+}}
+</pre>
