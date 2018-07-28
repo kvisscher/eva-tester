@@ -33,6 +33,7 @@ import { EvaTypingsService } from './services/eva-typings.service';
 import { ListServicesService } from './services/list-services.service';
 import { ServiceSelectorService } from './services/service-selector.service';
 import { tokenInterceptor } from './services/token-interceptor';
+import { JsonFormatterComponent } from './components/json-formatter/json-formatter.component';
 
 
 
@@ -51,7 +52,8 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     MarkdownHtmlComponent,
     EasterEggComponent,
     EasterEggDialogComponent,
-    OrganizationSelectorComponent
+    OrganizationSelectorComponent,
+    JsonFormatterComponent
   ],
   imports: [
     BrowserModule,
