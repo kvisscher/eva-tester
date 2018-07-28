@@ -1,4 +1,45 @@
 :host {
+  font-family: Roboto;
+}
+
+
+.overlay {
   position: fixed;
-  display: block;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255,0.56);
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+}
+
+.search-container {
+  z-index: 4;
+  position: fixed;
+  top: 125px;
+  left: 50%;
+  width: 200px;
+  transform: translateX(-50%);
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+  background: white;
+  box-sizing: content-box;
+  color: black;
+}
+
+input.search {
+  border: 0;
+  background-color: inherit;
+  font-size: 1.10rem;
+  width: 100%;
+  padding: 16px;
+  color: inherit;
+}
+
+input:focus {
+  outline: none;
+}
+
+.autocomplete::first-letter {
+  text-transform: uppercase;
+  padding: 16px 0px;
 }

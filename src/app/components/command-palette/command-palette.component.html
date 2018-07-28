@@ -1,3 +1,10 @@
-<p>
-  command-palette works!
-</p>
+<ng-container *ngIf="show">
+  <!-- <div class="overlay" @fadeInOut></div> -->
+
+  <div class="search-container" @fadeInOut>
+    <form [formGroup]="form">
+      <input #input class="search" type="text" formControlName="search" placeholder="Search" (keydown.Tab)="tabPressed($event)">
+      <div class="autocomplete">{{autocomplete}}</div>
+    </form>
+  </div>
+</ng-container>
