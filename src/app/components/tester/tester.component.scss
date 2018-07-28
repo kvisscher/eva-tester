@@ -1,13 +1,13 @@
 :host {
-  color: white;
+  height: calc(100vh - 100px);
+  display: block;
 }
 
 aside {
-  height: calc(100vh - 100px);
   padding: 16px;
   border-right: 1px solid var(--dark-green);
   overflow: scroll;
-  color: white;
+
 
   mat-form-field {
     width: 100%;
@@ -20,8 +20,4 @@ aside {
       color: yellow;
     }
   }
-}
-
-pre {
-  color: white;
 }

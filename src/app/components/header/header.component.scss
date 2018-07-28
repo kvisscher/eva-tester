@@ -2,7 +2,6 @@
   border-bottom: 5px solid var(--dark-green);
   display: block;
   padding: 16px;
-  color: white;
   height: auto;
   position: fixed;
   top: 0;
@@ -48,3 +47,18 @@ button.outline {
     left: -170%;
   }
 }
+
+img {
+  cursor: pointer;
+  transition: 300ms;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    transform: scale(1.10);
+  }
+}
+
+

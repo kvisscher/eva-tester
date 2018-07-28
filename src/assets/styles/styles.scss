@@ -2,16 +2,19 @@
     --bg-color: rgba(0, 0, 0, 0.8);
     --dark-green: #00701a;
     --header-height: 100px;
+    --color: white;
 }
 
 :root.light {
   --bg-color: whitesmoke;
+  --color: black;
 }
 
 /* You can add global styles to this file, and also import other style files */
 body {
   background-color: var(--bg-color);
   margin: 0;
+  color: var(--color);
 }
 
 button {
