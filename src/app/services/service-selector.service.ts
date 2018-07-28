@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TYPINGS_END_POINT } from './eva-typings.service';
 import { IListServiceItem } from './list-services.service';
+import { END_POINT_URL } from '../app.module';
 export interface IServiceResponse {
   description: string;
   request: IServiceResponseField;
@@ -31,6 +31,6 @@ export class ServiceSelectorService {
   constructor(private http: HttpClient ) { }
 
   fetch( serviceType: string ) {
-    return this.http.get<IServiceResponse>(TYPINGS_END_POINT + '/tester/api/services/' + serviceType);
+    return this.http.get<IServiceResponse>(END_POINT_URL + '/tester/api/services/' + serviceType);
   }
 }
