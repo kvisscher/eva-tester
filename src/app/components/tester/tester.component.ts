@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AngularFusejsOptions } from 'angular-fusejs';
 import { debounceTime } from '../../../../node_modules/rxjs/operators';
-import { EvaTypingsService } from '../../services/eva-typings.service';
 import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
-import { ServiceSelectorService, IServiceResponse } from '../../services/service-selector.service';
+import { ServiceSelectorService } from '../../services/service-selector.service';
 
 @Component({
   selector: 'eva-tester',
@@ -17,7 +16,9 @@ export class TesterComponent implements OnInit {
 
   public searchOptions: AngularFusejsOptions = {
     keys: ['name'],
-    maximumScore: 0.5
+    maximumScore: 0.5,
+    shouldSort: true,
+
   };
 
   public searchForm = this.formBuilder.group({
@@ -28,7 +29,7 @@ export class TesterComponent implements OnInit {
 
   searchTerms: string;
 
-  selectedService: IServiceResponse;
+  selectedService: IListServiceItem;
 
   constructor(
     private $listServices: ListServicesService,
@@ -44,8 +45,6 @@ export class TesterComponent implements OnInit {
 
   /** Whenever a service is selected, we will fetch it and create a code template */
   selectService(service: IListServiceItem) {
-    this.$serviceSelector.fetch(service.type).subscribe( (value) => {
-      this.selectedService = value;
-    });
+    this.selectedService = service;
   }
 }
