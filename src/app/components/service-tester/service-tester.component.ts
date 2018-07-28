@@ -10,6 +10,8 @@ import { listAnimation, fadeInOut } from '../../shared/animations';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { END_POINT_URL } from '../../app.module';
+import { HttpHeaders } from '@angular/common/http';
+import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -22,7 +24,8 @@ enum ESelectedTabIndex {
   selector: 'eva-service-tester',
   templateUrl: './service-tester.component.html',
   styleUrls: ['./service-tester.component.scss'],
-  animations: [listAnimation, fadeInOut]
+  animations: [listAnimation, fadeInOut],
+  providers: [CultureSelectorComponent]
 })
 export class ServiceTesterComponent implements OnInit {
 
@@ -78,7 +81,8 @@ export class ServiceTesterComponent implements OnInit {
     private $listServices: ListServicesService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private cultureSelectorComponent: CultureSelectorComponent
   ) {
 
     this.route.params.pipe(
@@ -149,13 +153,28 @@ export class ServiceTesterComponent implements OnInit {
   async preformRequest() {
     const request: any = await this.compileEditorInput();
 
+    const culture = this.cultureSelectorComponent.getCultureKey();
+
+    const httpOptions = { headers: {} };
+
+    if ( culture ) {
+      httpOptions.headers = new HttpHeaders({
+        'Accept-Language': culture
+      });
+    }
+
     // To:do take Accept-Language into account, when the culture selector is built
     //
-    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, request ).subscribe( response => {
-
-      this.selectedIndex = ESelectedTabIndex.RESPONSE;
-
+    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, request, httpOptions )
+    .pipe(first())
+    .toPromise()
+    .then( response => {
       this.response = response;
+    }).catch( exception => {
+      this.response = exception.error;
+    })
+    .then(() => {
+      this.selectedIndex = ESelectedTabIndex.RESPONSE;
     });
   }
 
