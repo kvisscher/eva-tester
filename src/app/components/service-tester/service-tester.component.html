@@ -26,9 +26,11 @@
   <h6>{{ serviceListItem.type }}</h6>
 
   <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
-  <form [formGroup]="form">
-    <eva-monaco-editor [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
-  </form>
-  <button mat-button (click)="compileEditorInput()">Submit</button>
-
 </ng-container>
+
+
+<form [formGroup]="form">
+  <eva-monaco-editor [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+</form>
+
+<button mat-button (click)="compileEditorInput()">Submit</button>

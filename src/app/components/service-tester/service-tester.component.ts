@@ -40,13 +40,17 @@ export class ServiceTesterComponent implements OnInit {
   /** This will help us compile different files in the future, when we add tabs support */
   public uniqueURI = `index-${Math.random()}.ts`;
 
+  public monacoModel: NgxEditorModel = {
+    language: 'typescript',
+    uri: this.uniqueURI,
+    value: null
+  };
+
   public monacoOptions = {
     theme: 'vs-dark',
     minimap: {
       enabled: false
-    },
-    language: 'typescript',
-    uri: this.uniqueURI
+    }
   };
 
   public form = this.formBuilder.group({
