@@ -33,6 +33,8 @@ export class JsonFormatterComponent  {
 
     const el = formatter.render();
 
+    (this.el.nativeElement as HTMLElement).innerHTML = null;
+
     (this.el.nativeElement as HTMLElement).appendChild(el);
   }
 }
