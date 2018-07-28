@@ -6,10 +6,10 @@ export interface IServiceResponse {
   description: string;
   request: IServiceResponseField;
   response: IServiceResponseField;
-  routes: {
+  routes: Array<{
     method: 'POST' | 'GET' | 'PUT' | 'DELETE';
     path: string;
-  };
+  }>;
   security: {
     requiredFunctionalities: Array<{
       functionality: string;
