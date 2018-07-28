@@ -16,8 +16,15 @@
   </aside>
 
   <div class="col-12 col-md-8">
-    <eva-service-tester [serviceListItem]="selectedService"></eva-service-tester>
-
+    <ng-container *ngIf="selectedService; else emptyState">
+      <eva-service-tester [serviceListItem]="selectedService"></eva-service-tester>
+    </ng-container>
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <mat-icon>list</mat-icon>
+        <h4>Select a service to get started</h4>
+      </div>
+    </ng-template>
   </div>
 
 </div>
