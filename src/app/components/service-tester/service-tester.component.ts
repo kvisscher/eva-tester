@@ -118,6 +118,8 @@ export class ServiceTesterComponent implements OnInit {
 
     this.loading = true;
 
+    this.selectedIndex = ESelectedTabIndex.REQUEST;
+
     this.$serviceSelector.fetch(service.type).subscribe( async value => {
       this.loading = false;
 
@@ -209,14 +211,13 @@ export class ServiceTesterComponent implements OnInit {
     //
     const jsObject: string = matchingOutput.text
       .replace('const request =', '') // getting rid of the assignemnt
-      .replace(';', ''); // getting rid of the semicolon
+      .replace(';', '') // getting rid of the semicolon
+      .replace('\n', ''); // getting rid of new spaces
 
     // tslint:disable-next-line:no-eval
     const jsonObject: Object = eval(`(${jsObject})`);
 
-    const jsonString: string = JSON.stringify(jsonObject);
-
-    return jsonString;
+    return jsonObject;
   }
 
   /** Returns the template that casts an empty object to a given eva type */
