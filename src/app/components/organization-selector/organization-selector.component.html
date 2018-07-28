@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-select placeholder="Choose organization" formControlName="organization">
+      <mat-option *ngFor="let org of organizations$ | async" [value]="org.ID">
+        {{org.Name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
