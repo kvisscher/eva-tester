@@ -3,8 +3,25 @@
 
   <div class="search-container" @fadeInOut>
     <form [formGroup]="form">
-      <input #input class="search" type="text" formControlName="search" placeholder="Search" (keydown.Tab)="tabPressed($event)">
-      <div class="autocomplete">{{autocomplete}}</div>
+      <input #input class="search" [attr.placeholder]="searchPlaceHolder" type="text" formControlName="mainSearch" >
+
+      <mat-spinner *ngIf="evaSearchResultLoading$ | async" [diameter]="20"></mat-spinner>
+      <div class="results-container">
+        <ng-container *ngIf="showMainSearchResults">
+          <ng-container *ngFor="let action of (actions | fusejs:(mainSearchTerms | async):searchOptions)">
+            <a class="w-100" href="" (keyup.Enter)="selectMainSearchOpt($event, action.value)" (click)="selectMainSearchOpt($event, action.value)">
+              <span [innerHTML]="action.fuseJsHighlighted.title"></span>
+            </a>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="showEvaResults">
+          <div *ngFor="let result of evaSearchResults$ | async" @slideUpDown>
+            <a class="w-100" href="" (click)="copyEvaSearch($event, result)" (keyup.Enter)="copyEvaSearch($event, result)">
+              {{ result.title }}
+            </a>
+          </div>
+        </ng-container>
+      </div>
     </form>
   </div>
 </ng-container>

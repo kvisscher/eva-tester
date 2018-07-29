@@ -18,7 +18,7 @@
   position: fixed;
   top: 125px;
   left: 50%;
-  width: 200px;
+  width: 300px;
   transform: translateX(-50%);
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
   background: white;
@@ -31,7 +31,7 @@ input.search {
   background-color: inherit;
   font-size: 1.10rem;
   width: 100%;
-  padding: 16px;
+  padding: 4px 8px;
   color: inherit;
 }
 
@@ -39,7 +39,35 @@ input:focus {
   outline: none;
 }
 
-.autocomplete::first-letter {
-  text-transform: uppercase;
-  padding: 16px 0px;
+.results-container {
+  max-height: 70vh;
+  overflow: scroll;
+  a {
+    color: black;
+    padding: 2px 8px;
+    width: 100%;
+    display: block;
+    transition: 300ms;
+    text-decoration: none;
+
+    span ::ng-deep em {
+      color: #23A0DB;
+    }
+
+    &:hover{
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    &:focus, .active {
+      outline: 0;
+      color: white;
+      background-color: var(--bg-color);
+    }
+  }
+}
+
+mat-spinner {
+  position: absolute;
+  right: 8px;
+  top: 6px;
 }
