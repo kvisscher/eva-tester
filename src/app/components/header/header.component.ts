@@ -5,7 +5,7 @@ import { first, map, filter, withLatestFrom } from 'rxjs/operators';
 import { ILoggable, Logger } from '../../decorators/logger';
 import { ApplicationsService } from '../../services/applications.service';
 import { slideUpDown } from '../../shared/animations';
-import { login, store, getCurrentUser, logout, settings } from '@springtree/eva-sdk-redux';
+import { login, store, getCurrentUser, logout, settings, listApplicationCultures, getOrganizationUnitsForUser } from '@springtree/eva-sdk-redux';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ListServicesService } from '../../services/list-services.service';
 import { Observable } from 'rxjs/Observable';
@@ -125,6 +125,14 @@ export class HeaderComponent implements OnInit, ILoggable {
           // Refetching the services
           //
           this.$listServices.fetch();
+
+          const [ listApplicationCulturesAction ] = listApplicationCultures.createFetchAction();
+
+          store.dispatch(listApplicationCulturesAction);
+
+          const [ getOrganizationUnitsForUserAction ] = getOrganizationUnitsForUser.createFetchAction();
+
+          store.dispatch(getOrganizationUnitsForUserAction);
         break;
 
         default:
