@@ -17,15 +17,12 @@ export class TesterComponent implements OnInit {
   public searchOptions: AngularFusejsOptions = {
     keys: ['name'],
     maximumScore: 0.5,
-    shouldSort: true,
-
+    shouldSort: true
   };
 
   public searchForm = this.formBuilder.group({
     search: [null]
   });
-
-  public uniqueURI = `index-${Math.random()}.ts`;
 
   searchTerms: string;
 
