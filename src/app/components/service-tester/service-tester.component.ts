@@ -76,7 +76,7 @@ export class ServiceTesterComponent implements OnInit {
 
   public selectedIndex = ESelectedTabIndex.REQUEST;
 
-  public moancoLoaded = false;
+  public monacoLoaded = false;
 
   constructor(
     private $evaTypings: EvaTypingsService,
@@ -149,7 +149,7 @@ export class ServiceTesterComponent implements OnInit {
     //     }
     //   }]
     // });
-    this.moancoLoaded = true;
+    this.monacoLoaded = true;
     // Whenever the editor loads, we want to fetch the typings
     //
     this.$evaTypings.load().subscribe(typings => {

@@ -11,7 +11,7 @@
           </mat-chip>
         </mat-chip-list>
         <mat-chip-list>
-          <mat-chip color="accent">
+          <mat-chip color="accent" [matTooltip]="currentService.security.requiresAuthentication ? 'Requires authentication'  : 'Doesnt require authentication' ">
             <ng-container *ngIf="currentService.security.requiresAuthentication">
               <mat-icon>lock</mat-icon>
             </ng-container>
@@ -35,7 +35,7 @@
     </form>
 
     <div class="no-gutters row justify-content-end">
-      <button mat-button (click)="preformRequest()" [disabled]="!moancoLoaded">Submit</button>
+      <button mat-button (click)="preformRequest()" [disabled]="monacoLoaded">Submit</button>
     </div>
 
   </mat-tab>
