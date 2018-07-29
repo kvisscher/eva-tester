@@ -14,7 +14,8 @@ enum CurrentSearchType {
   MAINSEARCH = 0,
   PRODUCTS = 1,
   ORDERS = 2,
-  USERS = 3
+  USERS = 3,
+  PRODUCTBARCODE = 4
 }
 
 interface IEvaSearchResult {
@@ -50,6 +51,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     {title: 'Search: Products', value: CurrentSearchType.PRODUCTS},
     {title: 'Search: Orders', value: CurrentSearchType.ORDERS},
     {title: 'Search: Users', value: CurrentSearchType.USERS},
+    {title: 'Search: Product barcode', value: CurrentSearchType.PRODUCTBARCODE}
   ];
 
   public form = this.fb.group({
@@ -131,7 +133,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           this.evaSearchResultLoading$ = searchUsers.isFetching$();
         }
-        if ( this.currentSearchEnum === CurrentSearchType.PRODUCTS ) {
+        if ( this.currentSearchEnum === CurrentSearchType.PRODUCTS || this.currentSearchEnum === CurrentSearchType.PRODUCTBARCODE ) {
           const [action] = searchProducts.createFetchAction({
             Query: query,
             IncludedFields: ['display_value', 'product_id', 'display_price', 'backend_id']
@@ -193,6 +195,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     this.show = false;
 
     this.currentSearchEnum = CurrentSearchType.MAINSEARCH;
+
+    this.form.reset();
   }
 
   selectMainSearchOpt(e: KeyboardEvent | MouseEvent, value: CurrentSearchType) {
