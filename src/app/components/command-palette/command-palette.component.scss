@@ -41,7 +41,7 @@ input:focus {
 
 .results-container {
   max-height: 70vh;
-  overflow: scroll;
+  overflow: auto;
   a {
     color: black;
     padding: 2px 8px;
