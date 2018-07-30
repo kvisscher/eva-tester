@@ -16,7 +16,7 @@
         </ng-container>
         <ng-container *ngIf="showEvaResults">
           <div *ngFor="let result of evaSearchResults$ | async" @slideUpDown>
-            <a class="w-100" href="" (click)="copyEvaSearch($event, result)" (keyup.Enter)="copyEvaSearch($event, result)">
+            <a class="w-100" href="" (click)="onResultItemClick($event, result)" (keyup.Enter)="onResultItemClick($event, result)">
               {{ result.title }}
             </a>
           </div>

@@ -1,7 +1,7 @@
 import { Component, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { searchOrders, searchProducts, searchUsers, store } from '@springtree/eva-sdk-redux';
+import { searchOrders, searchProducts, searchUsers, store, getProductDetail } from '@springtree/eva-sdk-redux';
 import { AngularFusejsOptions } from 'angular-fusejs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -29,7 +29,7 @@ interface IEvaSearchResult {
   selector: 'eva-command-palette',
   templateUrl: './command-palette.component.html',
   styleUrls: ['./command-palette.component.scss'],
-  animations: [ fadeInOut, slideUpDown ]
+  animations: [fadeInOut, slideUpDown]
 })
 export class CommandPaletteComponent implements OnInit, ILoggable {
   @ViewChild('input') mainSearchInput: { nativeElement: HTMLInputElement };
@@ -48,10 +48,10 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   };
 
   public actions = [
-    {title: 'Search: Products', value: CurrentSearchType.PRODUCTS},
-    {title: 'Search: Orders', value: CurrentSearchType.ORDERS},
-    {title: 'Search: Users', value: CurrentSearchType.USERS},
-    {title: 'Search: Product barcode', value: CurrentSearchType.PRODUCTBARCODE}
+    { title: 'Search: Products', value: CurrentSearchType.PRODUCTS },
+    { title: 'Search: Orders', value: CurrentSearchType.ORDERS },
+    { title: 'Search: Users', value: CurrentSearchType.USERS },
+    { title: 'Search: Product barcode', value: CurrentSearchType.PRODUCTBARCODE }
   ];
 
   public form = this.fb.group({
@@ -65,7 +65,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   /** This is a reflection of the mainSearch control but debounced */
   public mainSearchTerms: Observable<string> = this.form.get('mainSearch').valueChanges
     .pipe(
-      filter(() => this.currentSearchEnum === CurrentSearchType.MAINSEARCH ),
+      filter(() => this.currentSearchEnum === CurrentSearchType.MAINSEARCH),
       debounceTime(300)
     );
 
@@ -113,8 +113,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
         isNotNil(),
         debounceTime(300)
       )
-      .subscribe( query => {
-        if ( this.currentSearchEnum === CurrentSearchType.USERS ) {
+      .subscribe(query => {
+        if (this.currentSearchEnum === CurrentSearchType.USERS) {
           const [action] = searchUsers.createFetchAction({
             SearchQuery: query
           });
@@ -124,7 +124,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
           this.evaSearchResults$ = searchUsers.getResponse$().pipe(
             isNotNil(),
             map(res => res.Result.Page),
-            map( page => page.map( user => ({
+            map(page => page.map(user => ({
               id: user.ID,
               rawObject: user,
               title: user.FullName
@@ -133,10 +133,10 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           this.evaSearchResultLoading$ = searchUsers.isFetching$();
         }
-        if ( this.currentSearchEnum === CurrentSearchType.PRODUCTS || this.currentSearchEnum === CurrentSearchType.PRODUCTBARCODE ) {
+        if (this.currentSearchEnum === CurrentSearchType.PRODUCTS || this.currentSearchEnum === CurrentSearchType.PRODUCTBARCODE) {
           const [action] = searchProducts.createFetchAction({
             Query: query,
-            IncludedFields: ['display_value', 'product_id', 'display_price', 'backend_id']
+            IncludedFields: ['display_value', 'product_id', 'display_price', 'backend_id', 'barcodes']
           });
 
           this.evaSearchResults$ = searchProducts.getResponse$().pipe(
@@ -153,7 +153,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           store.dispatch(action);
         }
-        if ( this.currentSearchEnum === CurrentSearchType.ORDERS ) {
+        if (this.currentSearchEnum === CurrentSearchType.ORDERS) {
           const [action] = searchOrders.createFetchAction({
             Query: query
           });
@@ -161,7 +161,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
           this.evaSearchResults$ = searchOrders.getResponse$().pipe(
             isNotNil(),
             map(res => res.Result.Page),
-            map( page => page.map( order => ({
+            map(page => page.map(order => ({
               id: order.ID,
               rawObject: order,
               title: `Order ${order.ID}`
@@ -211,14 +211,41 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     this.evaSearchResults$ = new BehaviorSubject([]).asObservable();
   }
 
-  copyEvaSearch(e: KeyboardEvent | MouseEvent, value: IEvaSearchResult) {
+  onResultItemClick(e: KeyboardEvent | MouseEvent, value: IEvaSearchResult) {
     e.preventDefault();
+
+    this.show = false;
+
+    switch (this.currentSearchEnum) {
+      case CurrentSearchType.PRODUCTS:
+      case CurrentSearchType.ORDERS:
+      case CurrentSearchType.USERS:
+        this.copyEvaSearchResult(value);
+        break;
+      case CurrentSearchType.PRODUCTBARCODE:
+        /* Get product detail and copy to clipboard */
+        this.copyProductBarcode(value);
+        break;
+    }
+   }
+
+  /** Copies an eva search result item to the clipboard */
+  copyEvaSearchResult(value: IEvaSearchResult) {
 
     this.copyToClipboard(value.id.toString());
 
-    this.matSnackBar.open(`ID copied to clipboard`, null, {duration: 3000});
+    this.matSnackBar.open(`ID copied to clipboard`, null, { duration: 3000 });
 
     this.show = false;
+  }
+
+  async copyProductBarcode(value: IEvaSearchResult) {
+
+    const barcodes = value.rawObject.barcodes;
+
+    if ( barcodes ) {
+      this.copyToClipboard(barcodes[0]);
+    }
   }
 
   /**
