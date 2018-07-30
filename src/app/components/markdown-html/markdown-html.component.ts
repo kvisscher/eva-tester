@@ -72,6 +72,8 @@ export class MarkdownHtmlComponent extends EvaServiceHighLighter implements OnIn
 
   constructor(private el: ElementRef, protected $listServices: ListServicesService, protected router: Router) {
     super($listServices, router);
+
+    this.converter.setOption('emoji', true);
    }
 
   ngOnInit() {
