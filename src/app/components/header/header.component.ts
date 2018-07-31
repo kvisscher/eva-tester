@@ -9,6 +9,7 @@ import { login, store, getCurrentUser, logout, settings, listApplicationCultures
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ListServicesService } from '../../services/list-services.service';
 import { Observable } from 'rxjs/Observable';
+import { StoreInitService } from '../../services/store-init.service';
 
 interface ILoginFormValue {
   username: string;
@@ -69,7 +70,8 @@ export class HeaderComponent implements OnInit, ILoggable {
     private $applications: ApplicationsService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private $listServices: ListServicesService
+    private $listServices: ListServicesService,
+    private $storeInitService: StoreInitService
   ) { }
 
   ngOnInit() {
@@ -82,6 +84,8 @@ export class HeaderComponent implements OnInit, ILoggable {
     const newApplication = await this.selectedApplication;
 
     this.$applications.setSelected(newApplication);
+
+    this.$storeInitService.initializeStore();
   }
 
   logout() {

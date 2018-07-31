@@ -6,6 +6,7 @@ import { AngularFusejsOptions, FusejsPipe } from 'angular-fusejs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { debounceTime, filter, first, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import { ILoggable, Logger } from '../../decorators/logger';
 import { fadeInOut, slideUpDown } from '../../shared/animations';
 import isNotNil from '../../shared/operators/is-not-nil';
@@ -14,18 +15,19 @@ import { isEmpty } from 'lodash';
 import { EndPointUrlService } from '../../services/end-point-url.service';
 
 enum CurrentAction {
-  MAINSEARCH = 0,
-  PRODUCTS = 1,
-  ORDERS = 2,
-  USERS = 3,
-  PRODUCTBARCODE = 4,
-  ORGANIZATIONS = 5,
-  ENDPOINTURL = 6
+  MainSearch = 0,
+  ProductSearch = 1,
+  OrderSearch = 2,
+  UserSearch = 3,
+  ProductBarcodeSearch = 4,
+  OrganizationsSearch = 5,
+  EndPointUrlUpdate = 6,
+  EndPointUrlSearch = 7
 }
 
 interface IEvaSearchResult {
   rawObject: any;
-  id: number;
+  id: any;
   title: string;
 }
 
@@ -54,7 +56,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
 
     if ( show === false ) {
-      this.currentAction = CurrentAction.MAINSEARCH;
+      this.currentAction = CurrentAction.MainSearch;
       this.form.reset();
     }
   }
@@ -71,12 +73,13 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   };
 
   public actions = [
-    { title: 'Search: Products', value: CurrentAction.PRODUCTS },
-    { title: 'Search: Orders', value: CurrentAction.ORDERS },
-    { title: 'Search: Users', value: CurrentAction.USERS },
-    { title: 'Search: Product barcode', value: CurrentAction.PRODUCTBARCODE },
-    { title: 'Select: Organization unit', value: CurrentAction.ORGANIZATIONS },
-    { title: 'Update: End point url ', value: CurrentAction.ENDPOINTURL }
+    { title: 'Search: Products', value: CurrentAction.ProductSearch },
+    { title: 'Search: Orders', value: CurrentAction.OrderSearch },
+    { title: 'Search: Users', value: CurrentAction.UserSearch },
+    { title: 'Search: Product barcode', value: CurrentAction.ProductBarcodeSearch },
+    { title: 'Select: Organization unit', value: CurrentAction.OrganizationsSearch },
+    { title: 'Update: End point url', value: CurrentAction.EndPointUrlUpdate },
+    { title: 'Search: End point url', value: CurrentAction.EndPointUrlSearch }
   ];
 
   public form = this.fb.group({
@@ -90,43 +93,46 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   /** This is a reflection of the mainSearch control but debounced */
   public mainSearchTerms: Observable<string> = this.form.get('mainSearch').valueChanges
     .pipe(
-      filter(() => this.currentAction === CurrentAction.MAINSEARCH),
+      filter(() => this.currentAction === CurrentAction.MainSearch),
       debounceTime(300)
     );
 
   public get showMainSearchResults(): boolean {
     const value: string = this.form.get('mainSearch').value as string || '';
 
-    const showMainSearchResults = value.length > 0 && this.currentAction === CurrentAction.MAINSEARCH;
+    const showMainSearchResults = value.length > 0 && this.currentAction === CurrentAction.MainSearch;
 
     return showMainSearchResults;
   }
 
   public get showEvaResults(): boolean {
-    return this.currentAction !== CurrentAction.MAINSEARCH;
+    return this.currentAction !== CurrentAction.MainSearch;
   }
 
   public get searchPlaceHolder(): string {
 
     let placeholder = '';
 
-    if (this.currentAction === CurrentAction.ORDERS) {
+    if (this.currentAction === CurrentAction.OrderSearch) {
       placeholder = 'Search orders';
     }
-    if (this.currentAction === CurrentAction.PRODUCTS) {
+    if (this.currentAction === CurrentAction.ProductSearch) {
       placeholder = 'Search products';
     }
-    if (this.currentAction === CurrentAction.USERS) {
+    if (this.currentAction === CurrentAction.UserSearch) {
       placeholder = 'Search users';
     }
-    if ( this.currentAction === CurrentAction.ORGANIZATIONS ) {
+    if ( this.currentAction === CurrentAction.OrganizationsSearch ) {
       placeholder = 'Select organization';
+    }
+    if ( this.currentAction === CurrentAction.EndPointUrlSearch ) {
+      placeholder = 'Select end point urls';
     }
 
     return placeholder;
   }
 
-  currentAction: CurrentAction = CurrentAction.MAINSEARCH;
+  currentAction: CurrentAction = CurrentAction.MainSearch;
 
   constructor(
     private fb: FormBuilder,
@@ -139,14 +145,16 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   ) { }
 
   ngOnInit() {
-    this.form.get('mainSearch')
-      .valueChanges
+    const mainSearchValueChanges$ = this.form.get('mainSearch')
+      .valueChanges;
+
+    mainSearchValueChanges$
       .pipe(
         isNotNil(),
         debounceTime(300)
       )
       .subscribe(query => {
-        if (this.currentAction === CurrentAction.USERS) {
+        if (this.currentAction === CurrentAction.UserSearch) {
           const [action] = searchUsers.createFetchAction({
             SearchQuery: query
           });
@@ -165,7 +173,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           this.evaSearchResultLoading$ = searchUsers.isFetching$();
         }
-        if (this.currentAction === CurrentAction.PRODUCTS || this.currentAction === CurrentAction.PRODUCTBARCODE) {
+        if (this.currentAction === CurrentAction.ProductSearch || this.currentAction === CurrentAction.ProductBarcodeSearch) {
           const [action] = searchProducts.createFetchAction({
             Query: query,
             IncludedFields: ['display_value', 'product_id', 'display_price', 'backend_id', 'barcodes']
@@ -184,7 +192,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
               // If we are in barcode mode, we will filter out products without a filled barcodes array
               //
-              if ( this.currentAction === CurrentAction.PRODUCTBARCODE ) {
+              if ( this.currentAction === CurrentAction.ProductBarcodeSearch ) {
                 productResults = productResults.filter( product => isEmpty(product.rawObject.barcodes) === false );
               }
 
@@ -196,7 +204,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           store.dispatch(action);
         }
-        if (this.currentAction === CurrentAction.ORDERS) {
+        if (this.currentAction === CurrentAction.OrderSearch) {
           const [action] = searchOrders.createFetchAction({
             Query: query
           });
@@ -215,26 +223,42 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
           store.dispatch(action);
         }
-        if (this.currentAction === CurrentAction.ORGANIZATIONS) {
-          this.evaSearchResults$ = getOrganizationUnitsForUser.getResponse$().pipe(
-            isNotNil(),
-            map( res => res.Result ),
-            map(page => {
-              const organizations: IEvaSearchResult[] = page.map( organization => {
-                return {
-                  id: organization.ID,
-                  title: organization.Name,
-                  rawObject: organization
-                } as IEvaSearchResult;
-              });
-
-              const fusejsSortedOrganizations = this.fusejsPipe.transform(organizations, query, this.searchOptions);
-
-              return fusejsSortedOrganizations;
-            })
-          );
-        }
       });
+
+    // We dont want to debounce or check for null values here as we are not doing any new services calls
+    //
+    mainSearchValueChanges$.subscribe( query => {
+      if (this.currentAction === CurrentAction.OrganizationsSearch) {
+        this.evaSearchResults$ = getOrganizationUnitsForUser.getResponse$().pipe(
+          isNotNil(),
+          map(res => res.Result),
+          map(page => {
+            const organizations: IEvaSearchResult[] = page.map(organization => {
+              return {
+                id: organization.ID,
+                title: organization.Name,
+                rawObject: organization
+              } as IEvaSearchResult;
+            });
+
+            const fusejsSortedOrganizations = this.fusejsPipe.transform(organizations, query, this.searchOptions);
+
+            return fusejsSortedOrganizations;
+          })
+        );
+      }
+      if (this.currentAction === CurrentAction.EndPointUrlSearch) {
+        const evaSearchResults = this.$endPointUrlService.endPointUrls.map(endPointUrl => ({
+          id: endPointUrl,
+          title: endPointUrl,
+          rawObject: null
+        } as IEvaSearchResult));
+
+        const fusejsSortedOrganizations = this.fusejsPipe.transform(evaSearchResults, query, this.searchOptions);
+
+        this.evaSearchResults$ = of(fusejsSortedOrganizations);
+      }
+    });
   }
 
   @HostListener('window:keyup.shift.p', ['$event']) onShiftP(e: KeyboardEvent) {
@@ -319,26 +343,47 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     this.mainSearchInput.nativeElement.focus();
 
     this.evaSearchResults$ = new BehaviorSubject([]).asObservable();
+
+    if ( this.currentAction === CurrentAction.EndPointUrlUpdate ) {
+      const newEndPointUrl = prompt('New end point url');
+
+      if ( newEndPointUrl ) {
+        this.$endPointUrlService.onChange(newEndPointUrl);
+      }
+    }
+    if ( this.currentAction === CurrentAction.EndPointUrlSearch ) {
+      this.evaSearchResults$ = of(this.$endPointUrlService.endPointUrls.map(endPointUrl => ({
+        id: endPointUrl,
+        title: endPointUrl,
+        rawObject: null
+      } as IEvaSearchResult)));
+    }
   }
 
   onResultItemClick(e: KeyboardEvent | MouseEvent, value: IEvaSearchResult) {
     e.preventDefault();
 
-    this.show = false;
-
     switch (this.currentAction) {
-      case CurrentAction.PRODUCTS:
-      case CurrentAction.ORDERS:
-      case CurrentAction.USERS:
+      case CurrentAction.ProductSearch:
+      case CurrentAction.OrderSearch:
+      case CurrentAction.UserSearch:
         this.copyEvaSearchResult(value);
-        break;
-      case CurrentAction.PRODUCTBARCODE:
+      break;
+      case CurrentAction.ProductBarcodeSearch:
         this.copyProductBarcode(value);
-        break;
-      case CurrentAction.ORGANIZATIONS:
-        this.organizationSelectorComponent.switchOrganization(value.id);
-        break;
+      break;
+      case CurrentAction.OrganizationsSearch:
+        this.organizationSelectorComponent.switchOrganization(value.id as number);
+      break;
+      case CurrentAction.EndPointUrlSearch:
+        this.$endPointUrlService.onChange(value.id as string);
+      break;
+
+      default:
+        console.log('none supported value', this.currentAction);
     }
+
+    this.show = false;
    }
 
   /** Copies an eva search result item to the clipboard */

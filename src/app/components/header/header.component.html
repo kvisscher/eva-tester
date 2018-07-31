@@ -30,7 +30,7 @@
         Session id
         <mat-icon>refresh</mat-icon>
       </button>
-      <mat-form-field  *ngIf="!(user$ | async)">
+      <mat-form-field  *ngIf="!(user$ | async) && applications$ | async">
         <mat-select placeholder="Choose application" [ngModel]="selectedApplicationId" (ngModelChange)="applicationChange($event)">
           <mat-option *ngFor="let application of applications$ | async" [value]="application.ID">
             {{application.Name}}

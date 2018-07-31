@@ -36,6 +36,7 @@ import { tokenInterceptor } from './services/token-interceptor';
 import { JsonFormatterComponent } from './components/json-formatter/json-formatter.component';
 import { CultureSelectorComponent } from './components/culture-selector/culture-selector.component';
 import { EndPointUrlService } from './services/end-point-url.service';
+import { StoreInitService } from './services/store-init.service';
 
 
 @NgModule({
@@ -87,7 +88,8 @@ import { EndPointUrlService } from './services/end-point-url.service';
     ListServicesService,
     ApplicationsService,
     ServiceSelectorService,
-    EndPointUrlService
+    EndPointUrlService,
+    StoreInitService
   ],
   bootstrap: [AppComponent]
 })

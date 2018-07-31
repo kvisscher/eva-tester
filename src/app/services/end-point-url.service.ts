@@ -6,7 +6,10 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class EndPointUrlService {
 
-  private _selectedEndPointUrl = 'https://api.test.eva-online.cloud';
+  /** Fallback endpoint url if none are present */
+  private DEFAULT_ENDPOINT_URL = 'https://api.test.eva-online.cloud';
+
+  private _selectedEndPointUrl: string;
 
   public get endPointUrl(): string {
     return this._selectedEndPointUrl || JSON.parse(localStorage.getItem('endPointUrl'));
@@ -28,7 +31,7 @@ export class EndPointUrlService {
   private _endPointUrls: string[];
 
   public get endPointUrls(): string[] {
-    return this._endPointUrls || JSON.parse(localStorage.getItem('endPointUrls'));
+    return this._endPointUrls || JSON.parse(localStorage.getItem('endPointUrls')) || [];
   }
 
   public set endPointUrls( endPointUrls: string[] ) {
@@ -37,7 +40,11 @@ export class EndPointUrlService {
     localStorage.setItem('endPointUrls', JSON.stringify(endPointUrls));
   }
 
-  constructor() { }
+  constructor() {
+    if ( ! this.endPointUrl ) {
+      this.endPointUrl = this.DEFAULT_ENDPOINT_URL;
+    }
+  }
 
   onChange(endPointUrl: string) {
     const keysToReset = ['selectedApplication', 'sessionId', 'userToken', 'selectedCulture'];
