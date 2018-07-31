@@ -28,3 +28,7 @@ router-outlet {
   display: block;
   margin-top: var(--header-height);
 }
+
+*::-webkit-scrollbar {
+    display: none;
+}
