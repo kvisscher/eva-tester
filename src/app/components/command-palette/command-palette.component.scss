@@ -45,9 +45,8 @@ input:focus {
   a {
     color: black;
     padding: 2px 8px;
-    width: 100%;
     display: block;
-    transition: 300ms;
+    transition: 50ms;
     text-decoration: none;
 
     span ::ng-deep em {
@@ -58,10 +57,13 @@ input:focus {
       background-color: rgba(0, 0, 0, 0.3);
     }
 
-    &:focus, .active {
-      outline: 0;
+    &:focus {
       color: white;
       background-color: var(--bg-color);
+    }
+
+    &:focus {
+      outline: 0;
     }
   }
 }
