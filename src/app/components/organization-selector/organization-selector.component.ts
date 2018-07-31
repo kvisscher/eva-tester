@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { getOrganizationUnitsForUser, login, settings, store } from '@springtree/eva-sdk-redux';
-import { map, first, delay, pairwise } from 'rxjs/operators';
+import { map, first, delay, pairwise, filter, takeUntil } from 'rxjs/operators';
 import isNotNil from '../../shared/operators/is-not-nil';
 import { Logger, ILoggable } from '../../decorators/logger';
+import { Subject } from 'rxjs/Subject';
+import { MatSnackBar } from '@angular/material';
 
 @Logger
 @Component({
@@ -11,7 +13,7 @@ import { Logger, ILoggable } from '../../decorators/logger';
   templateUrl: './organization-selector.component.html',
   styleUrls: ['./organization-selector.component.scss']
 })
-export class OrganizationSelectorComponent implements OnInit, ILoggable {
+export class OrganizationSelectorComponent implements OnInit, ILoggable, OnDestroy {
   logger: Partial<Console>;
 
   private _selectedOrganization: EVA.Core.OrganizationUnitDto;
@@ -36,7 +38,9 @@ export class OrganizationSelectorComponent implements OnInit, ILoggable {
     map( res => res.Result )
   );
 
-  constructor(public fb: FormBuilder) { }
+  public stop$ = new Subject<void>();
+
+  constructor(public fb: FormBuilder, private snackbar: MatSnackBar) { }
 
   ngOnInit() {
 
@@ -52,6 +56,17 @@ export class OrganizationSelectorComponent implements OnInit, ILoggable {
     )
     .subscribe(async (newOrganizationId) => {
       this.switchOrganization(newOrganizationId);
+    });
+
+    // If someone selects an organizatio somewhere else, we want the change to be reflected in the form
+    //
+    login.getRequest$().pipe(
+      isNotNil(),
+      map( request => request.OrganizationUnitID ),
+      filter(organizationUnitId => organizationUnitId !== this.form.get('organization').value as number ),
+      takeUntil(this.stop$)
+    ).subscribe( organizationUnitId => {
+      this.form.get('organization').setValue(organizationUnitId, { emitEvent: false });
     });
   }
 
@@ -82,9 +97,15 @@ export class OrganizationSelectorComponent implements OnInit, ILoggable {
 
       this.selectedOrganization = selectedOrganization;
 
+      this.snackbar.open(`Switched to ${selectedOrganization.Name}`, null, {duration: 3000});
+
     } catch (e) {
       this.logger.error('error switching organization...', e);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.stop$.next();
   }
 
 }
