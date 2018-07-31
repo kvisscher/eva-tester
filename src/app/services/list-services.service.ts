@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { END_POINT_URL } from '../app.module';
 import { Logger, ILoggable } from '../decorators/logger';
 import { first } from '../../../node_modules/rxjs/operators';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { EndPointUrlService } from './end-point-url.service';
 
 export interface IListServiceItem {
   name: string;
@@ -22,10 +22,10 @@ export class ListServicesService implements ILoggable {
 
   public services$ = new BehaviorSubject<IListServiceItem[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) {}
 
   fetch() {
-    this.http.get<ISericesResponse>(END_POINT_URL + '/tester/api/services')
+    this.http.get<ISericesResponse>(this.$endPointUrlService.endPointUrl + '/tester/api/services')
       .pipe( first() )
       .subscribe( serviceResponse => this.services$.next(serviceResponse.services) );
   }

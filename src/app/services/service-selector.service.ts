@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IListServiceItem } from './list-services.service';
-import { END_POINT_URL } from '../app.module';
+import { EndPointUrlService } from './end-point-url.service';
 export interface IServiceResponse {
   description: string;
   request: IServiceResponseField;
@@ -28,9 +28,9 @@ interface IServiceResponseField extends IListServiceItem {
 @Injectable()
 export class ServiceSelectorService {
 
-  constructor(private http: HttpClient ) { }
+  constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) { }
 
   fetch( serviceType: string ) {
-    return this.http.get<IServiceResponse>(END_POINT_URL + '/tester/api/services/' + serviceType);
+    return this.http.get<IServiceResponse>(this.$endPointUrlService + '/tester/api/services/' + serviceType);
   }
 }

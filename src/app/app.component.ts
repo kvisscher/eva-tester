@@ -6,6 +6,8 @@ import { filter, retry, retryWhen, tap } from 'rxjs/operators';
 import { ILoggable, Logger } from './decorators/logger';
 import { ListServicesService } from './services/list-services.service';
 import { bootstrapStore, IEnvironment } from './shared/bootstrap-store';
+import { ApplicationsService } from './services/applications.service';
+import { EndPointUrlService } from './services/end-point-url.service';
 
 @Logger
 @Component({
@@ -16,8 +18,14 @@ export class AppComponent implements ILoggable {
 
   public logger: Partial<Console>;
 
-  constructor(private $listServices: ListServicesService) {
-    this.initializeStore();
+  constructor(
+    private $listServices: ListServicesService,
+    private $applicationService: ApplicationsService,
+    private $endPointUrlService: EndPointUrlService
+  ) {
+    if ( this.$applicationService.getSelected() ) {
+      this.initializeStore();
+    }
   }
 
   async initializeStore() {
@@ -38,8 +46,8 @@ export class AppComponent implements ILoggable {
 
     try {
       const env = await Promise.resolve({
-        defaultToken: 'CECD606DF7FDEF93D751978346C36A43A07B53D3D5694BDCBC6DA6596A4CBCFD',
-        endPointURL: 'https://api.test.eva-online.cloud'
+        defaultToken: this.$applicationService.getSelected().AuthenticationToken,
+        endPointURL: this.$endPointUrlService.endPointUrl
       } as IEnvironment);
       defer(() => bootstrapStore(env)).pipe(
         retryWhen(source => {
@@ -72,7 +80,7 @@ export class AppComponent implements ILoggable {
         }
       });
     } catch (e) {
-      this.logger.error('failed to fetch environment file');
+      this.logger.error('failed to fetch environment file', e);
     }
   }
 }

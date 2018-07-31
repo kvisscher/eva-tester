@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { END_POINT_URL } from '../app.module';
 import { HttpClient } from '@angular/common/http';
+import { EndPointUrlService } from './end-point-url.service';
 
 @Injectable()
 export class ApplicationsService {
@@ -18,10 +18,12 @@ export class ApplicationsService {
     localStorage.setItem('selectedApplication', JSON.stringify(newSelectedApplication));
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) { }
 
   fetch() {
-    return this.http.post<EVA.Core.Services.ListApplicationsResponse>(END_POINT_URL + '/message/ListApplications', {});
+    return this.http.post<EVA.Core.Services.ListApplicationsResponse>(
+      this.$endPointUrlService.endPointUrl + '/message/ListApplications', {}
+    );
   }
 
   setSelected( application: EVA.Core.Services.ApplicationDto ) {

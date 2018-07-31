@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Logger, ILoggable } from '../decorators/logger';
-import { END_POINT_URL } from '../app.module';
+import { EndPointUrlService } from './end-point-url.service';
 
 /**
  * This service will be responsible for fetching the eva-typings, it will also store them in indexdb
@@ -13,12 +13,12 @@ import { END_POINT_URL } from '../app.module';
 export class EvaTypingsService implements ILoggable {
   public logger: Partial<Console>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) {
     this.logger.log('constructed');
   }
 
   load() {
-    return this.http.get<string>(`${END_POINT_URL}/api/definition/typescript?useDeclareModule=true`, {
+    return this.http.get<string>(`${this.$endPointUrlService.endPointUrl}/api/definition/typescript?useDeclareModule=true`, {
       responseType: 'text' as any
     });
   }

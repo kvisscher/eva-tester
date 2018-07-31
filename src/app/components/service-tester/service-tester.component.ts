@@ -9,10 +9,10 @@ import { tap, filter, first } from 'rxjs/operators';
 import { listAnimation, fadeInOut } from '../../shared/animations';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { END_POINT_URL } from '../../app.module';
 import { HttpHeaders } from '@angular/common/http';
 import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
 import { settings } from '@springtree/eva-sdk-redux';
+import { EndPointUrlService } from '../../services/end-point-url.service';
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -83,7 +83,8 @@ export class ServiceTesterComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private http: HttpClient,
-    private cultureSelectorComponent: CultureSelectorComponent
+    private cultureSelectorComponent: CultureSelectorComponent,
+    private $endPointUrlService: EndPointUrlService
   ) {
 
     this.route.params.pipe(
@@ -169,7 +170,7 @@ export class ServiceTesterComponent implements OnInit {
 
     // To:do take Accept-Language into account, when the culture selector is built
     //
-    this.http.post<any>(END_POINT_URL + '/message/' + this.currentService.request.type, {
+    this.http.post<any>(this.$endPointUrlService.endPointUrl + '/message/' + this.currentService.request.type, {
       ...request,
       SessionID: settings.sessionId
     }, httpOptions )

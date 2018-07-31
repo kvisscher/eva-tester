@@ -35,11 +35,8 @@ import { ServiceSelectorService } from './services/service-selector.service';
 import { tokenInterceptor } from './services/token-interceptor';
 import { JsonFormatterComponent } from './components/json-formatter/json-formatter.component';
 import { CultureSelectorComponent } from './components/culture-selector/culture-selector.component';
+import { EndPointUrlService } from './services/end-point-url.service';
 
-
-
-
-export const END_POINT_URL = 'https://api.test.eva-online.cloud';
 
 @NgModule({
   declarations: [
@@ -89,7 +86,8 @@ export const END_POINT_URL = 'https://api.test.eva-online.cloud';
     EvaTypingsService,
     ListServicesService,
     ApplicationsService,
-    ServiceSelectorService
+    ServiceSelectorService,
+    EndPointUrlService
   ],
   bootstrap: [AppComponent]
 })
