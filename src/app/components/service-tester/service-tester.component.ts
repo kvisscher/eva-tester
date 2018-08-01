@@ -14,6 +14,7 @@ import { CultureSelectorComponent } from '../culture-selector/culture-selector.c
 import { settings } from '@springtree/eva-sdk-redux';
 import { EndPointUrlService } from '../../services/end-point-url.service';
 import { ClipboardService } from '../../services/clipboard.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -86,7 +87,8 @@ export class ServiceTesterComponent implements OnInit {
     private http: HttpClient,
     private cultureSelectorComponent: CultureSelectorComponent,
     private $endPointUrlService: EndPointUrlService,
-    public $clipboardService: ClipboardService
+    public $clipboardService: ClipboardService,
+    private snackbar: MatSnackBar
   ) {
 
     this.route.params.pipe(
@@ -235,5 +237,7 @@ export class ServiceTesterComponent implements OnInit {
 
   copyResponse( response: any ) {
     this.$clipboardService.copyToClipboard(JSON.stringify(response, null, 2));
+
+    this.snackbar.open('Resposne copied to clipboard', null, { duration: 3000 });
   }
 }
