@@ -31,6 +31,6 @@ export class ServiceSelectorService {
   constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) { }
 
   fetch( serviceType: string ) {
-    return this.http.get<IServiceResponse>(this.$endPointUrlService + '/tester/api/services/' + serviceType);
+    return this.http.get<IServiceResponse>(this.$endPointUrlService.endPointUrl + '/tester/api/services/' + serviceType);
   }
 }
