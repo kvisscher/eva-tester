@@ -261,10 +261,10 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     });
   }
 
-  @HostListener('window:keyup.shift.p', ['$event']) onShiftP(e: KeyboardEvent) {
+  @HostListener('window:keydown.meta.p', ['$event'])
+  @HostListener('window:keydown.control.p', ['$event'])
+  openCommandPalette(e: KeyboardEvent) {
     e.preventDefault();
-
-    console.log('open spotlight');
 
     this.show = true;
 
