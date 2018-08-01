@@ -1,7 +1,7 @@
 import { Component, HostListener, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { searchOrders, searchProducts, searchUsers, store, getProductDetail, getOrganizationUnitsForUser } from '@springtree/eva-sdk-redux';
+import { searchOrders, searchProducts, searchUsers, store, getProductDetail, getOrganizationUnitsForUser, settings } from '@springtree/eva-sdk-redux';
 import { AngularFusejsOptions, FusejsPipe } from 'angular-fusejs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -22,7 +22,8 @@ enum CurrentAction {
   ProductBarcodeSearch = 4,
   OrganizationsSearch = 5,
   EndPointUrlUpdate = 6,
-  EndPointUrlSearch = 7
+  EndPointUrlSearch = 7,
+  UserTokenSwitch = 8
 }
 
 interface IEvaSearchResult {
@@ -61,7 +62,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     }
   }
 
-  public activeSearchIndex = 0;
+  public activeSearchIndex = null;
 
   public searchOptions: AngularFusejsOptions = {
     keys: ['title'],
@@ -79,7 +80,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     { title: 'Search: Product barcode', value: CurrentAction.ProductBarcodeSearch },
     { title: 'Select: Organization unit', value: CurrentAction.OrganizationsSearch },
     { title: 'Update: End point url', value: CurrentAction.EndPointUrlUpdate },
-    { title: 'Search: End point url', value: CurrentAction.EndPointUrlSearch }
+    { title: 'Search: End point url', value: CurrentAction.EndPointUrlSearch },
+    { title: 'Update: User token', value: CurrentAction.UserTokenSwitch }
   ];
 
   public form = this.fb.group({
@@ -357,6 +359,14 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
         title: endPointUrl,
         rawObject: null
       } as IEvaSearchResult)));
+    }
+
+    if ( this.currentAction === CurrentAction.UserTokenSwitch ) {
+      const newUserToken = prompt('New user token');
+
+      if ( newUserToken ) {
+        settings.userToken = newUserToken;
+      }
     }
   }
 
