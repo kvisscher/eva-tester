@@ -37,6 +37,7 @@ import { JsonFormatterComponent } from './components/json-formatter/json-formatt
 import { CultureSelectorComponent } from './components/culture-selector/culture-selector.component';
 import { EndPointUrlService } from './services/end-point-url.service';
 import { StoreInitService } from './services/store-init.service';
+import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { StoreInitService } from './services/store-init.service';
     EasterEggDialogComponent,
     OrganizationSelectorComponent,
     JsonFormatterComponent,
-    CultureSelectorComponent
+    CultureSelectorComponent,
+    EmptyStateComponent
   ],
   imports: [
     BrowserModule,

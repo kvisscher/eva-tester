@@ -1,4 +1,6 @@
-<mat-tab-group>
+<eva-empty-state *ngIf="noUser$ | async" title="Login first" icon="vpn_key"></eva-empty-state>
+
+<mat-tab-group *ngIf="!(noUser$ | async)">
   <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
     <eva-tester></eva-tester>
   </mat-tab>

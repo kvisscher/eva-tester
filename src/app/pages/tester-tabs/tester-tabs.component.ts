@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { getCurrentUser } from '@springtree/eva-sdk-redux';
+import { withLatestFrom, map, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'eva-tester-tabs',
@@ -6,6 +9,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tester-tabs.component.scss']
 })
 export class TesterTabsComponent implements OnInit {
+
+  public noUser$: Observable<boolean> = getCurrentUser.getState$().pipe(
+    filter(state => !state.isFetching),
+    withLatestFrom(getCurrentUser.getLoggedInUser$()),
+    map(([_currentUser, currentLoggedInUser]) => !Boolean(currentLoggedInUser))
+  );
 
   public tabs = ['Service 1'];
 
