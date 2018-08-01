@@ -1,18 +1,19 @@
-import { Component, HostListener, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { searchOrders, searchProducts, searchUsers, store, getProductDetail, getOrganizationUnitsForUser, settings } from '@springtree/eva-sdk-redux';
+import { getOrganizationUnitsForUser, searchOrders, searchProducts, searchUsers, settings, store } from '@springtree/eva-sdk-redux';
 import { AngularFusejsOptions, FusejsPipe } from 'angular-fusejs';
+import { isEmpty } from 'lodash';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { debounceTime, filter, first, map } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { debounceTime, filter, first, map } from 'rxjs/operators';
 import { ILoggable, Logger } from '../../decorators/logger';
+import { ClipboardService } from '../../services/clipboard.service';
+import { EndPointUrlService } from '../../services/end-point-url.service';
 import { fadeInOut, slideUpDown } from '../../shared/animations';
 import isNotNil from '../../shared/operators/is-not-nil';
 import { OrganizationSelectorComponent } from '../organization-selector/organization-selector.component';
-import { isEmpty } from 'lodash';
-import { EndPointUrlService } from '../../services/end-point-url.service';
 
 enum CurrentAction {
   MainSearch = 0,
@@ -143,7 +144,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     private organizationSelectorComponent: OrganizationSelectorComponent,
     private fusejsPipe: FusejsPipe,
     private el: ElementRef,
-    private $endPointUrlService: EndPointUrlService
+    private $endPointUrlService: EndPointUrlService,
+    private $clipboardService: ClipboardService
   ) { }
 
   ngOnInit() {
@@ -399,7 +401,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   /** Copies an eva search result item to the clipboard */
   copyEvaSearchResult(value: IEvaSearchResult) {
 
-    this.copyToClipboard(value.id.toString());
+    this.$clipboardService.copyToClipboard(value.id.toString());
 
     this.matSnackBar.open(`ID copied to clipboard`, null, { duration: 3000 });
 
@@ -411,28 +413,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     const barcodes = value.rawObject.barcodes;
 
     if ( barcodes ) {
-      this.copyToClipboard(barcodes[0]);
+      this.$clipboardService.copyToClipboard(barcodes[0]);
     }
   }
-
-  /**
-   * @param value to copy
-   * @author Sangram Nandkhile
-   * @see https://stackoverflow.com/a/49121680/4047409
-   */
-  private copyToClipboard(value: string) {
-    const copyElement = document.createElement('textarea');
-    copyElement.style.position = 'fixed';
-    copyElement.style.left = '0';
-    copyElement.style.top = '0';
-    copyElement.style.opacity = '0';
-    copyElement.value = value;
-    document.body.appendChild(copyElement);
-    copyElement.focus();
-    copyElement.select();
-    document.execCommand('copy');
-    document.body.removeChild(copyElement);
-  }
-
 
 }

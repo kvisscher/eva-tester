@@ -38,6 +38,7 @@ import { CultureSelectorComponent } from './components/culture-selector/culture-
 import { EndPointUrlService } from './services/end-point-url.service';
 import { StoreInitService } from './services/store-init.service';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
+import { ClipboardService } from './services/clipboard.service';
 
 
 @NgModule({
@@ -91,7 +92,8 @@ import { EmptyStateComponent } from './components/empty-state/empty-state.compon
     ApplicationsService,
     ServiceSelectorService,
     EndPointUrlService,
-    StoreInitService
+    StoreInitService,
+    ClipboardService
   ],
   bootstrap: [AppComponent]
 })

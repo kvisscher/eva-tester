@@ -13,6 +13,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
 import { settings } from '@springtree/eva-sdk-redux';
 import { EndPointUrlService } from '../../services/end-point-url.service';
+import { ClipboardService } from '../../services/clipboard.service';
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -84,7 +85,8 @@ export class ServiceTesterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private http: HttpClient,
     private cultureSelectorComponent: CultureSelectorComponent,
-    private $endPointUrlService: EndPointUrlService
+    private $endPointUrlService: EndPointUrlService,
+    public $clipboardService: ClipboardService
   ) {
 
     this.route.params.pipe(
@@ -231,4 +233,7 @@ export class ServiceTesterComponent implements OnInit {
     return codeTemplate;
   }
 
+  copyResponse( response: any ) {
+    this.$clipboardService.copyToClipboard(JSON.stringify(response, null, 2));
+  }
 }
