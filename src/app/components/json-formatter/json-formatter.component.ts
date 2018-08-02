@@ -11,6 +11,8 @@ export class JsonFormatterComponent  {
 
   private _json: any;
 
+  private formatter: JSONFormatter;
+
   public get json(): any {
     return this._json;
   }
@@ -23,15 +25,35 @@ export class JsonFormatterComponent  {
     }
   }
 
+  private _expandAll;
+
+  public get expandAll() {
+    return this._expandAll;
+  }
+
+  @Input()
+  public set expandAll(expandAll) {
+    this._expandAll = expandAll;
+
+    if ( expandAll === true ) {
+      this.formatter.openAtDepth(Infinity);
+    }
+
+    if ( expandAll === false ) {
+      this.formatter.openAtDepth(0);
+    }
+
+  }
+
   constructor(private el: ElementRef) { }
 
   updateView(json: any) {
-    const formatter = new JSONFormatter(json, 3, {
+    this.formatter = new JSONFormatter(json, 3, {
       theme: 'dark',
       hoverPreviewEnabled: true,
     });
 
-    const el = formatter.render();
+    const el = this.formatter.render();
 
     (this.el.nativeElement as HTMLElement).innerHTML = null;
 

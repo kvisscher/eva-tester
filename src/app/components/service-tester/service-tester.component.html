@@ -31,7 +31,10 @@
 <mat-tab-group [selectedIndex]="selectedIndex">
   <mat-tab label="Request">
     <form [formGroup]="form">
-      <eva-monaco-editor [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
+      <eva-monaco-editor
+        (keydown.ctrl.Enter)="preformRequest()"
+        (keydown.meta.Enter)="preformRequest()"
+        [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
     </form>
 
     <div class="no-gutters row justify-content-end">
@@ -41,8 +44,11 @@
   </mat-tab>
 
   <mat-tab label="Response" [disabled]="!response">
-    <button mat-button class="copy-response" (click)="copyResponse(response)">Copy</button>
-    <eva-json-formatter [json]="response"></eva-json-formatter>
+    <div class="response-buttons">
+      <button mat-button (click)="expandAllJson = !expandAllJson">Toggle</button>
+        <button mat-button (click)="copyResponse(response)">Copy</button>
+    </div>
+    <eva-json-formatter [expandAll]="expandAllJson" [json]="response"></eva-json-formatter>
   </mat-tab>
 </mat-tab-group>
 

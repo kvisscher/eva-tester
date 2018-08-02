@@ -76,7 +76,10 @@ export class ServiceTesterComponent implements OnInit {
   /** Response of the service */
   public response: any;
 
-  public selectedIndex = ESelectedTabIndex.REQUEST;
+  /** Whether to expand all the json or not */
+  public expandAllJson = null;
+
+  public selectedTabIndex = ESelectedTabIndex.REQUEST;
 
   constructor(
     private $evaTypings: EvaTypingsService,
@@ -123,7 +126,7 @@ export class ServiceTesterComponent implements OnInit {
 
     this.loading = true;
 
-    this.selectedIndex = ESelectedTabIndex.REQUEST;
+    this.selectedTabIndex = ESelectedTabIndex.REQUEST;
 
     this.$serviceSelector.fetch(service.type).subscribe( async value => {
       this.loading = false;
@@ -186,7 +189,7 @@ export class ServiceTesterComponent implements OnInit {
       this.response = exception.error;
     })
     .then(() => {
-      this.selectedIndex = ESelectedTabIndex.RESPONSE;
+      this.selectedTabIndex = ESelectedTabIndex.RESPONSE;
     });
   }
 

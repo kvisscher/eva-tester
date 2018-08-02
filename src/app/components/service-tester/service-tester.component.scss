@@ -30,7 +30,11 @@ eva-monaco-editor {
   height: 350px;
 }
 
-.copy-response {
+.response-buttons {
   position: absolute;
   right: 0;
+}
+
+eva-json-formatter {
+  min-height: 36px;
 }
