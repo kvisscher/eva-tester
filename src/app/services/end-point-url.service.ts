@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { isEqual } from 'lodash';
+import { MatSnackBar } from '@angular/material';
 
 /**
  * The end point URL can be changed runtime, all services will be using this service to know where to point at
@@ -40,7 +42,7 @@ export class EndPointUrlService {
     localStorage.setItem('endPointUrls', JSON.stringify(endPointUrls));
   }
 
-  constructor() {
+  constructor(private snackbar: MatSnackBar ) {
     if ( ! this.endPointUrl ) {
       this.endPointUrl = this.DEFAULT_ENDPOINT_URL;
     }
@@ -50,6 +52,10 @@ export class EndPointUrlService {
     const keysToReset = ['selectedApplication', 'sessionId', 'userToken', 'selectedCulture'];
 
     keysToReset.forEach( key => localStorage.removeItem(key) );
+
+    if ( isEqual(new URL(endPointUrl).protocol, window.location.protocol) === false ) {
+      this.snackbar.open('Provided end point url has different protocol than this urls protocol', null, { duration: 5000 });
+    }
 
     this.endPointUrl = endPointUrl;
 
