@@ -165,6 +165,11 @@ export class ServiceTesterComponent implements OnInit {
   async preformRequest() {
     const request: any = await this.compileEditorInput();
 
+    if ( request.SessionID ) {
+      // Means the developer wanted to override the session id
+      settings.sessionId = request.SessionID;
+    }
+
     const culture = this.cultureSelectorComponent.getCultureKey();
 
     const httpOptions = { headers: {} };
