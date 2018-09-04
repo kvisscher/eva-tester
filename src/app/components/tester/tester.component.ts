@@ -15,7 +15,7 @@ export class TesterComponent implements OnInit {
   public readonly services$ = this.$listServices.services$;
 
   public searchOptions: AngularFusejsOptions = {
-    keys: ['name'],
+    keys: ['name', 'ns'],
     maximumScore: 0.5,
     shouldSort: true
   };

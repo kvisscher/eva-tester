@@ -10,6 +10,7 @@
       <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
         <button mat-button class="w-100" (click)="selectService(service)">
           <span [innerHTML]="service.fuseJsHighlighted.name"></span>
+          <div class="name-space" [innerHTML]="service.fuseJsHighlighted.ns"></div>
         </button>
       </ng-container>
     </ng-container>
