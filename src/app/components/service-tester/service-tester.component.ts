@@ -290,7 +290,7 @@ export class ServiceTesterComponent implements OnInit {
             `  fetchPromise.then( ${reducerName}Response => {`,
             `    console.log(${reducerName}Response)`,
             `  }).catch( error => {`,
-            `  `,
+            `    console.error(error)`,
             `  });`,
             `}`
           ].join('\n')
@@ -305,7 +305,6 @@ export class ServiceTesterComponent implements OnInit {
       title: serviceName,
       description: `Auto created from ${window.location.origin}/service/${serviceName}`
     }, {
-      hideDevTools: false,
       devToolsHeight: 500,
       openFile: `${reducerName}.ts`
     });
