@@ -15,6 +15,9 @@ import { settings } from '@springtree/eva-sdk-redux';
 import { EndPointUrlService } from '../../services/end-point-url.service';
 import { ClipboardService } from '../../services/clipboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import stackblitz from '@stackblitz/sdk';
+
+
 
 enum ESelectedTabIndex {
   REQUEST = 0,
@@ -247,5 +250,64 @@ export class ServiceTesterComponent implements OnInit {
     this.$clipboardService.copyToClipboard(JSON.stringify(response, null, 2));
 
     this.snackbar.open('Resposne copied to clipboard', null, { duration: 3000 });
+  }
+
+  openCodeSample() {
+
+    const serviceName = this.serviceListItem.name;
+    const reducerName = serviceName.charAt(0).toLowerCase() + serviceName.slice(1);
+
+    stackblitz.openProject({
+      template: 'typescript',
+      files: {
+        'index.ts':
+          `import { core } from '@springtree/eva-sdk-redux';
+           import ${reducerName}Fn from  './${ reducerName }'
+            core.bootstrap({
+            defaultToken: 'CECD606DF7FDEF93D751978346C36A43A07B53D3D5694BDCBC6DA6596A4CBCFD',
+            endPointUrl: 'https://api.test.eva-online.cloud',
+            appName: 'tester-demo',
+            appVersion: '1.0.0',
+            disableCartBootstrap: true,
+            disableDataBootstrap: true,
+          }).then(() => {
+            ${reducerName}Fn();
+          });
+        `
+         ,
+        [`${reducerName}.ts`]:
+          [
+            `/** ⚠️  The store might not contain this reducer yet */`,
+            `import { store, ${reducerName} } from '@springtree/eva-sdk-redux';`,
+            `export default () => {`,
+            `  const [action, fetchPromise] = ${reducerName}.createFetchAction({`,
+            `  `,
+            `  });`,
+            `  `,
+            `  store.dispatch(action)`,
+            `  `,
+            `  // Promise usage`,
+            `  fetchPromise.then( ${reducerName}Response => {`,
+            `    console.log(${reducerName}Response)`,
+            `  }).catch( error => {`,
+            `  `,
+            `  });`,
+            `}`
+          ].join('\n')
+        ,
+        'index.html': '<div id="app"></div>'
+      },
+      dependencies: {
+        '@springtree/eva-sdk-redux': '@latest',
+        'lodash': '@latest',
+        'rxjs': '5.5.12'
+      },
+      title: serviceName,
+      description: `Auto created from ${window.location.origin}/service/${serviceName}`
+    }, {
+      hideDevTools: false,
+      devToolsHeight: 500,
+      openFile: `${reducerName}.ts`
+    });
   }
 }
