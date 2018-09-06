@@ -51,8 +51,13 @@
     <eva-json-formatter [expandAll]="expandAllJson" [json]="response"></eva-json-formatter>
   </mat-tab>
 
-  <mat-tab label="Code sample">
-    <button mat-button (click)="openCodeSample()">Code sample</button>
+  <mat-tab label="Live demo">
+    <p class="py-3">This will allow you to edit the request and see changes in real time, it will also teach you how to use the <a href="https://github.com/springtreesolutions/eva-sdk-redux">eva-sdk-redux</a> in your applications</p>
+
+    <button mat-button (click)="openCodeSample()">
+      Open demo
+      <mat-icon>open_in_new</mat-icon>
+    </button>
   </mat-tab>
 </mat-tab-group>
 
