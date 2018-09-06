@@ -263,6 +263,7 @@ export class ServiceTesterComponent implements OnInit {
         'index.ts':
           `import { core } from '@springtree/eva-sdk-redux';
            import ${reducerName}Fn from  './${ reducerName }'
+           import JSONFormatter from 'json-formatter-js';
             core.bootstrap({
             defaultToken: 'CECD606DF7FDEF93D751978346C36A43A07B53D3D5694BDCBC6DA6596A4CBCFD',
             endPointUrl: 'https://api.test.eva-online.cloud',
@@ -271,8 +272,19 @@ export class ServiceTesterComponent implements OnInit {
             disableCartBootstrap: true,
             disableDataBootstrap: true,
           }).then(() => {
-            ${reducerName}Fn();
-          });
+            return ${reducerName}Fn();
+          }).then( response => {
+            const formatter = new JSONFormatter(response, 2, {
+                theme: 'dark',
+                hoverPreviewEnabled: true,
+            });
+
+            const el = formatter.render()
+
+            document.querySelector('#app').innerHTML = null;
+
+            document.querySelector('#app').appendChild(el);
+          }).catch(()=>{});
         `
          ,
         [`${reducerName}.ts`]:
@@ -292,15 +304,24 @@ export class ServiceTesterComponent implements OnInit {
             `  }).catch( error => {`,
             `    console.error(error)`,
             `  });`,
+            `  return fetchPromise`,
             `}`
           ].join('\n')
         ,
-        'index.html': '<div id="app"></div>'
+        'index.html': `
+        <div id="app"></div>
+        <style>
+          body {
+            background: black;
+          }
+        </style>
+        `
       },
       dependencies: {
         '@springtree/eva-sdk-redux': '@latest',
         'lodash': '@latest',
-        'rxjs': '5.5.12'
+        'rxjs': '5.5.12',
+        'json-formatter-js': '@latest'
       },
       title: serviceName,
       description: `Auto created from ${window.location.origin}/service/${serviceName}`
