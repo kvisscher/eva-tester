@@ -5,7 +5,7 @@ import { EvaTypingsService } from '../../services/eva-typings.service';
 import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
 import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
 import { EditorComponent } from '../editor/editor.component';
-import { tap, filter, first } from 'rxjs/operators';
+import { tap, filter, first, share, map } from 'rxjs/operators';
 import { listAnimation, fadeInOut } from '../../shared/animations';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,7 @@ import { EndPointUrlService } from '../../services/end-point-url.service';
 import { ClipboardService } from '../../services/clipboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import stackblitz from '@stackblitz/sdk';
+import { Observable } from 'rxjs/Observable';
 
 
 
@@ -50,7 +51,9 @@ export class ServiceTesterComponent implements OnInit {
     }
   }
 
-  public currentService: IServiceResponse;
+  public currentService$: Observable<IServiceResponse>;
+
+  public currentTypeSignature$: Observable<string>;
 
   public loading = false;
 
@@ -131,14 +134,20 @@ export class ServiceTesterComponent implements OnInit {
 
     this.selectedTabIndex = ESelectedTabIndex.REQUEST;
 
-    this.$serviceSelector.fetch(service.type).subscribe( async value => {
-      this.loading = false;
+    this.currentService$ = this.$serviceSelector.fetch(service.type);
 
-      this.currentService = value;
+    this.currentTypeSignature$ = this.currentService$.pipe(
+      map( value => value.request.ns + '.' + value.request.type)
+    );
 
-      const newEditorValue = this.createCodeTemplate(value.request.ns + '.' + value.request.type);
+    this.currentTypeSignature$.subscribe( currentTypeSignature => {
+      const newEditorValue = this.createCodeTemplate(currentTypeSignature);
 
       this.form.get('editor').setValue(newEditorValue);
+    });
+
+    this.currentService$.subscribe( value => {
+      this.loading = false;
     });
   }
 
@@ -183,9 +192,11 @@ export class ServiceTesterComponent implements OnInit {
       });
     }
 
+    const currentService = await this.currentService$.pipe(first()).toPromise();
+
     // To:do take Accept-Language into account, when the culture selector is built
     //
-    this.http.post<any>(this.$endPointUrlService.endPointUrl + '/message/' + this.currentService.request.type, {
+    this.http.post<any>(this.$endPointUrlService.endPointUrl + '/message/' + currentService.request.type, {
       ...request,
       SessionID: settings.sessionId
     }, httpOptions )
@@ -252,10 +263,15 @@ export class ServiceTesterComponent implements OnInit {
     this.snackbar.open('Resposne copied to clipboard', null, { duration: 3000 });
   }
 
-  openCodeSample() {
+  async openCodeSample() {
 
     const serviceName = this.serviceListItem.name;
+
     const reducerName = serviceName.charAt(0).toLowerCase() + serviceName.slice(1);
+
+    const typings = await this.$evaTypings.load().pipe(first()).toPromise();
+
+    const currentTypeSignature = await this.currentTypeSignature$.pipe(first()).toPromise();
 
     stackblitz.openProject({
       template: 'typescript',
@@ -294,7 +310,7 @@ export class ServiceTesterComponent implements OnInit {
             `export default () => {`,
             `  const [action, fetchPromise] = ${reducerName}.createFetchAction({`,
             `  `,
-            `  });`,
+            `  } as Partial<${currentTypeSignature}>);`,
             `  `,
             `  store.dispatch(action)`,
             `  `,
@@ -315,7 +331,8 @@ export class ServiceTesterComponent implements OnInit {
             background: black;
           }
         </style>
-        `
+        `,
+        'eva.d.ts': typings
       },
       dependencies: {
         '@springtree/eva-sdk-redux': '@latest',

@@ -1,6 +1,6 @@
 <mat-spinner *ngIf="loading" @fadeInOut [diameter]="30"></mat-spinner>
 
-<ng-container *ngIf="currentService">
+<ng-container *ngIf="currentService$ | async; let currentService">
   <h1>
     <div class="row no-gutters justify-content-between align-items-center">
       <span>{{ serviceListItem.name }}</span>
