@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AngularFusejsOptions } from 'angular-fusejs';
 import { debounceTime } from '../../../../node_modules/rxjs/operators';
@@ -26,7 +26,19 @@ export class TesterComponent implements OnInit {
 
   searchTerms: string;
 
-  selectedService: IListServiceItem;
+  @Output() selectedServiceChange = new EventEmitter<IListServiceItem>();
+
+  private _selectedService: IListServiceItem;
+
+  public get selectedService(): IListServiceItem {
+    return this._selectedService;
+  }
+
+  public set selectedService(value: IListServiceItem) {
+    this._selectedService = value;
+
+    this.selectedServiceChange.emit(value);
+  }
 
   constructor(
     private $listServices: ListServicesService,

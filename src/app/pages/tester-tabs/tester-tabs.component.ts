@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { getCurrentUser } from '@springtree/eva-sdk-redux';
 import { withLatestFrom, map, filter } from 'rxjs/operators';
+import { IListServiceItem } from '../../services/list-services.service';
 
 @Component({
   selector: 'eva-tester-tabs',
@@ -16,11 +17,23 @@ export class TesterTabsComponent implements OnInit {
     map(([_currentUser, currentLoggedInUser]) => !Boolean(currentLoggedInUser))
   );
 
-  public tabs = ['Service 1'];
+  public tabs: Partial<IListServiceItem>[] = [{
+    name: 'Service 1'
+  }];
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  public addTab() {
+    this.tabs.push({
+      name: `Service ${this.tabs.length + 1}`
+    });
+  }
+
+  selectedServiceChange(serviceName: IListServiceItem, index: number) {
+    this.tabs[index].name = serviceName.name;
   }
 
 }

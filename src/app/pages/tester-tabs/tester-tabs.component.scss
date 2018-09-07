@@ -1,0 +1,10 @@
+.tabs-container {
+  position: relative;
+  button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 49px;
+    z-index: 1;
+  }
+}
