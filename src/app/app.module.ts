@@ -39,6 +39,7 @@ import { EndPointUrlService } from './services/end-point-url.service';
 import { StoreInitService } from './services/store-init.service';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { ClipboardService } from './services/clipboard.service';
+import { DragComponent } from './components/drag/drag.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { ClipboardService } from './services/clipboard.service';
     OrganizationSelectorComponent,
     JsonFormatterComponent,
     CultureSelectorComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    DragComponent
   ],
   imports: [
     BrowserModule,
