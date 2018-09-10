@@ -1,0 +1,79 @@
+/** the height of the divider */
+$divider-height: 16;
+
+:host{
+  position: fixed;
+  z-index : 1001;
+  width: 160px;
+  color:white;
+  background: #37474F;
+  opacity: 1;
+  transition-delay: 0.1s;
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  padding: 8px 0px;
+  border-radius: 4px;
+  font-size:15px;
+
+  &.offScreen{
+    left: -999px;
+    top: -999px;
+    opacity: 0;
+    z-index: -999;
+  }
+
+  .option{
+    display: flex;
+    align-items: center;
+    padding: 4px 16px 4px 24px;
+    transition: 0.3s;
+    transition-property: background-color;
+    color: white;
+    cursor: default;
+    width: 100%;
+    background: transparent;
+    border: none;
+
+    span.title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    span, i.material-icons{
+      user-select: none;
+    }
+
+    i.material-icons + .title {
+      margin-left: 16px;
+    }
+
+    &:hover:not(:disabled){
+      background:#cfd8dc;
+      color: black;
+    }
+
+    &[disabled] {
+      color: grey !important;
+      cursor: not-allowed;
+    }
+
+    &:focus{
+      outline: none;
+    }
+
+    .right{
+      margin-left: auto;
+      i.material-icons{
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.divider {
+  background-color: #263238;
+  height: 1px;
+  margin: #{$divider-height / 2}px 0;
+  width: 100%;
+}

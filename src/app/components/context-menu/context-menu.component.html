@@ -1,0 +1,32 @@
+<ng-container *ngFor="let option of menu">
+
+    <button
+      *ngIf="!isEmpty(option)"
+      class="option"
+      (click)="onItemClick(option)"
+      (mouseenter)="showChildren($event, option)"
+      [disabled]="option.disabled"
+      (mouseleave)="subContextMenuOpen = false"
+    >
+      <i class="material-icons" *ngIf="option.icon">{{option.icon}}</i>
+      <span class="title" [attr.title]="option.title"> {{option.title}} </span>
+      <span class="right" *ngIf="option.children?.length">
+        <i class="material-icons">play_arrow</i>
+      </span>
+
+      <!-- We can use recursion to load up any children -->
+      <!-- Sub children start -->
+      <ng-container *ngIf="subContextMenuOpen">
+          <eva-context-menu
+            [event]="getSubMenuPosition()"
+            [menu]="subMenuItems"
+            [parentDepth]="elementDepth"
+          >
+          </eva-context-menu>
+      </ng-container>
+      <!-- Sub children end -->
+    </button>
+
+    <div *ngIf="isEmpty(option)" class="divider" [style.background-color]="option.color"></div>
+
+</ng-container>

@@ -40,6 +40,8 @@ import { StoreInitService } from './services/store-init.service';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { ClipboardService } from './services/clipboard.service';
 import { DragComponent } from './components/drag/drag.component';
+import { EvaContextMenuModule } from './components/context-menu/context-menu.module';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
@@ -77,6 +79,7 @@ import { DragComponent } from './components/drag/drag.component';
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    MatMenuModule,
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
@@ -84,7 +87,8 @@ import { DragComponent } from './components/drag/drag.component';
     MatChipsModule,
     MatDialogModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    EvaContextMenuModule
   ],
   entryComponents: [EasterEggDialogComponent],
   providers: [
