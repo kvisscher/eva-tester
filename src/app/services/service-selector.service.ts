@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IListServiceItem } from './list-services.service';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { finalize, shareReplay } from 'rxjs/operators';
 import { EndPointUrlService } from './end-point-url.service';
+import { IListServiceItem } from './list-services.service';
 export interface IServiceResponse {
   description: string;
   request: IServiceResponseField;
@@ -30,7 +32,12 @@ export class ServiceSelectorService {
 
   constructor(private http: HttpClient, private $endPointUrlService: EndPointUrlService) { }
 
-  fetch( serviceType: string ) {
-    return this.http.get<IServiceResponse>(this.$endPointUrlService.endPointUrl + '/tester/api/services/' + serviceType);
+  fetch( serviceType: string ): Observable<IServiceResponse> {
+    const stream$ = this.http.get<IServiceResponse>(this.$endPointUrlService.endPointUrl + '/tester/api/services/' + serviceType)
+      .pipe(
+        shareReplay()
+      );
+
+    return stream$;
   }
 }
