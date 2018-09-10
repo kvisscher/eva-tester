@@ -21,6 +21,8 @@ export class TesterTabsComponent implements OnInit {
     name: 'Service 1'
   }];
 
+  public selectedTabIndex = 0;
+
   constructor() { }
 
   ngOnInit() {
@@ -30,6 +32,8 @@ export class TesterTabsComponent implements OnInit {
     this.tabs.push({
       name: `Service ${this.tabs.length + 1}`
     });
+
+    this.selectedTabIndex = this.tabs.length;
   }
 
   selectedServiceChange(serviceName: IListServiceItem, index: number) {

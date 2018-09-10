@@ -1,7 +1,7 @@
 <eva-empty-state *ngIf="noUser$ | async" title="Login first" icon="vpn_key"></eva-empty-state>
 
 <div class="tabs-container">
-  <mat-tab-group *ngIf="!(noUser$ | async)">
+  <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex">
     <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab.name">
       <eva-tester (selectedServiceChange)="selectedServiceChange($event, index)"></eva-tester>
     </mat-tab>
