@@ -28,7 +28,7 @@
   <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
 </ng-container>
 
-<mat-tab-group [selectedIndex]="selectedIndex">
+<mat-tab-group [(selectedIndex)]="selectedTabIndex">
   <mat-tab label="Request">
     <form [formGroup]="form">
       <eva-monaco-editor

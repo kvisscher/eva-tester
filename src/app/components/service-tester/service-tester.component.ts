@@ -1,22 +1,21 @@
-import { Component, Input, OnInit, ViewChild, NgZone } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { settings } from '@springtree/eva-sdk-redux';
+import stackblitz from '@stackblitz/sdk';
+import { Observable } from 'rxjs/Observable';
+import { filter, first, map, tap } from 'rxjs/operators';
 import { NgxEditorModel } from '../../components/editor';
+import { ClipboardService } from '../../services/clipboard.service';
+import { EndPointUrlService } from '../../services/end-point-url.service';
 import { EvaTypingsService } from '../../services/eva-typings.service';
 import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
 import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
-import { EditorComponent } from '../editor/editor.component';
-import { tap, filter, first, share, map } from 'rxjs/operators';
-import { listAnimation, fadeInOut } from '../../shared/animations';
-import { FormBuilder } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { fadeInOut, listAnimation } from '../../shared/animations';
 import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
-import { settings } from '@springtree/eva-sdk-redux';
-import { EndPointUrlService } from '../../services/end-point-url.service';
-import { ClipboardService } from '../../services/clipboard.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import stackblitz from '@stackblitz/sdk';
-import { Observable } from 'rxjs/Observable';
+import { EditorComponent } from '../editor/editor.component';
 
 
 
