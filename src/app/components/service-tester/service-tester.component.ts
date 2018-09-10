@@ -280,8 +280,8 @@ export class ServiceTesterComponent implements OnInit {
            import ${reducerName}Fn from  './${ reducerName }'
            import JSONFormatter from 'json-formatter-js';
             core.bootstrap({
-            defaultToken: 'CECD606DF7FDEF93D751978346C36A43A07B53D3D5694BDCBC6DA6596A4CBCFD',
-            endPointUrl: 'https://api.test.eva-online.cloud',
+            defaultToken: '${settings.userToken}',
+            endPointUrl: '${settings.endPointURL}',
             appName: 'tester-demo',
             appVersion: '1.0.0',
             disableCartBootstrap: true,
