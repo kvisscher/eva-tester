@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { isEqual } from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import { ILoggable, Logger } from '../decorators/logger';
+import { first } from 'rxjs/operators';
 
 /**
  * The end point URL can be changed runtime, all services will be using this service to know where to point at
  */
+@Logger
 @Injectable()
-export class EndPointUrlService {
+export class EndPointUrlService implements ILoggable {
+  public logger: Partial<Console>;
 
   /** Fallback endpoint url if none are present */
   private DEFAULT_ENDPOINT_URL = 'https://api.test.eva-online.cloud';
@@ -48,17 +52,36 @@ export class EndPointUrlService {
     }
   }
 
-  onChange(endPointUrl: string) {
+  async onChange(endPointUrl: string) {
     const keysToReset = ['selectedApplication', 'sessionId', 'userToken', 'selectedCulture'];
 
     keysToReset.forEach( key => localStorage.removeItem(key) );
 
-    if ( isEqual(new URL(endPointUrl).protocol, window.location.protocol) === false ) {
-      this.snackbar.open('Provided end point url has different protocol than this urls protocol', null, { duration: 5000 });
+    try {
+      const url = new URL(endPointUrl);
+
+      const protocol = url.protocol;
+
+      const origin = url.origin;
+
+      if (isEqual(protocol, window.location.protocol) === false) {
+        const snackbar = this.snackbar.open(
+          'Provided end point url has different protocol than this urls protocol',
+          null, {
+          duration: 5000
+        });
+
+        await snackbar.afterDismissed().pipe(first()).toPromise();
+      }
+
+      this.endPointUrl = origin;
+
+      location.reload();
+    } catch (e) {
+      this.logger.error('Error parsing the given URL, please try again');
+
+      this.snackbar.open('Error parsing the given URL, please try again', null, { duration: 5000 });
     }
 
-    this.endPointUrl = endPointUrl;
-
-    location.reload();
   }
 }
