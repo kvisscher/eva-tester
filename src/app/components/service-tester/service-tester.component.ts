@@ -334,10 +334,10 @@ export class ServiceTesterComponent implements OnInit {
         'eva.d.ts': typings
       },
       dependencies: {
-        '@springtree/eva-sdk-redux': '@latest',
-        'lodash': '@latest',
+        '@springtree/eva-sdk-redux': '*',
+        'lodash': '*',
         'rxjs': '5.5.12',
-        'json-formatter-js': '@latest'
+        'json-formatter-js': '*'
       },
       title: serviceName,
       description: `Auto created from ${window.location.origin}/service/${serviceName}`
