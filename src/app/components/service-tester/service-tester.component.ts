@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -16,6 +16,7 @@ import { IServiceResponse, ServiceSelectorService } from '../../services/service
 import { fadeInOut, listAnimation } from '../../shared/animations';
 import { CultureSelectorComponent } from '../culture-selector/culture-selector.component';
 import { EditorComponent } from '../editor/editor.component';
+import { ITesterState } from '../tester/tester.component';
 
 
 
@@ -55,6 +56,18 @@ export class ServiceTesterComponent implements OnInit {
   public currentTypeSignature$: Observable<string>;
 
   public loading = false;
+
+  private _testerState: ITesterState;
+
+  public get testerState(): ITesterState {
+    return this._testerState;
+  }
+
+  @Input()
+  public set testerState(value: ITesterState) {
+    console.log(value);
+    this._testerState = value;
+  }
 
   @ViewChild(EditorComponent) monacoEditor: EditorComponent;
 
@@ -122,7 +135,9 @@ export class ServiceTesterComponent implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
   /** Whenever a service is selected, we will fetch it and create a code template */
   onServiceChange(service: IListServiceItem) {

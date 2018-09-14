@@ -1,33 +1,3 @@
-<mat-spinner *ngIf="loading" @fadeInOut [diameter]="30"></mat-spinner>
-
-<ng-container *ngIf="currentService$ | async; let currentService">
-  <h1>
-    <div class="row no-gutters justify-content-between align-items-center">
-      <span>{{ serviceListItem.name }}</span>
-      <div class="d-flex align-items-center">
-        <mat-chip-list class="mr-2" [@listAnimation]="currentService.security.requiredUserType.length">
-          <mat-chip *ngFor="let functionality of currentService.security.requiredUserType" selected color="primary">
-          {{ functionality }}
-          </mat-chip>
-        </mat-chip-list>
-        <mat-chip-list>
-          <mat-chip color="accent" [matTooltip]="currentService.security.requiresAuthentication ? 'Requires authentication'  : 'Doesnt require authentication' ">
-            <ng-container *ngIf="currentService.security.requiresAuthentication">
-              <mat-icon>lock</mat-icon>
-            </ng-container>
-            <ng-container *ngIf="currentService.security.requiresAuthentication === false">
-              <mat-icon>lock_open</mat-icon>
-            </ng-container>
-          </mat-chip>
-        </mat-chip-list>
-      </div>
-    </div>
-  </h1>
-  <h6>{{ serviceListItem.type }}</h6>
-
-  <eva-markdown-html [markdown]="currentService?.description"></eva-markdown-html>
-</ng-container>
-
 <mat-tab-group [(selectedIndex)]="selectedTabIndex">
   <mat-tab label="Request">
     <form [formGroup]="form">
