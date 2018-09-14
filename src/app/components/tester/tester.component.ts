@@ -1,9 +1,18 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { AngularFusejsOptions } from 'angular-fusejs';
-import { debounceTime } from '../../../../node_modules/rxjs/operators';
-import { IListServiceItem, ListServicesService } from '../../services/list-services.service';
-import { ServiceSelectorService } from '../../services/service-selector.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { IListServiceItem } from '../../services/list-services.service';
+import { ServiceSelectorService, IServiceResponse } from '../../services/service-selector.service';
+import { Observable } from 'rxjs/Observable';
+import uuid from '../../shared/random-id';
+
+/** Represents an editor tab */
+export interface ITesterState {
+  listMetaData: IListServiceItem;
+  detailMetaData: Observable<IServiceResponse>;
+  id: string;
+  name: string;
+  editorModel: string;
+  response: string;
+}
 
 @Component({
   selector: 'eva-tester',
@@ -12,48 +21,61 @@ import { ServiceSelectorService } from '../../services/service-selector.service'
 })
 export class TesterComponent implements OnInit {
 
-  public readonly services$ = this.$listServices.services$;
-
-  public searchOptions: AngularFusejsOptions = {
-    keys: ['name', 'ns'],
-    maximumScore: 0.5,
-    shouldSort: true
-  };
-
-  public searchForm = this.formBuilder.group({
-    search: [null]
-  });
-
-  searchTerms: string;
-
-  @Output() selectedServiceChange = new EventEmitter<IListServiceItem>();
+  public selectedServices: Partial<ITesterState>[] = [{
+    name: 'Service',
+    editorModel: null,
+    response: null,
+    id: null,
+    detailMetaData: null,
+    listMetaData: null
+  }];
 
   private _selectedService: IListServiceItem;
 
   public get selectedService(): IListServiceItem {
     return this._selectedService;
   }
-
+  @Input()
   public set selectedService(value: IListServiceItem) {
     this._selectedService = value;
 
-    this.selectedServiceChange.emit(value);
+    this.selectedServices[this.selectedTabIndex] = {
+      name: value.name,
+      detailMetaData: this.$serviceSelector.fetch(value.type),
+      listMetaData: value,
+      editorModel: null,
+      id: uuid(),
+      response: null
+    };
   }
 
-  constructor(
-    private $listServices: ListServicesService,
-    private formBuilder: FormBuilder,
-    private $serviceSelector: ServiceSelectorService
-  ) {
-    this.searchForm.get('search').valueChanges.pipe(debounceTime(500)).subscribe( (value: string) => {
-      this.searchTerms = value;
+  public selectedTabIndex = 0;
+
+  constructor(private $serviceSelector: ServiceSelectorService) {}
+
+  ngOnInit(): void {
+
+  }
+
+  public addTab() {
+    this.selectedServices.push({
+      name: null,
+      id: uuid(),
+      response: null,
+      detailMetaData: null,
+      editorModel: null,
+      listMetaData: null
     });
+
+    this.selectedTabIndex = this.selectedServices.length;
   }
 
-  ngOnInit() { }
-
-  /** Whenever a service is selected, we will fetch it and create a code template */
-  selectService(service: IListServiceItem) {
-    this.selectedService = service;
+  selectedServiceChange(serviceName: IListServiceItem, index: number) {
+    this.selectedServices[index].name = serviceName.name;
   }
+
+  onTabChange(index: number) {
+
+  }
+
 }

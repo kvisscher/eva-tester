@@ -1,30 +1,15 @@
-<div class="row m-0 h-100">
-  <aside class="col-12 col-md-4 h-100">
-    <form [formGroup]="searchForm">
-      <mat-form-field>
-        <input matInput placeholder="Search service" formControlName="search">
-      </mat-form-field>
-    </form>
+<div class="tabs-container">
+  <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab
+    *ngFor="let selectedService of selectedServices; let index = index"
+    [label]="selectedService.name || 'Service ' + (index + 1) ">
+      <eva-service-tester-info [testerState]="selectedServices[index]"></eva-service-tester-info>
+    </mat-tab>
+  </mat-tab-group>
 
-    <ng-container *ngIf=" services$ | async; let services">
-      <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
-        <button mat-button class="w-100" (click)="selectService(service)">
-          <span [innerHTML]="service.fuseJsHighlighted.name"></span>
-          <div class="name-space" [innerHTML]="service.fuseJsHighlighted.ns"></div>
-        </button>
-      </ng-container>
-    </ng-container>
-  </aside>
-
-  <div class="col-12 col-md-8">
-    <ng-container *ngIf="selectedService; else emptyState">
-      <eva-service-tester [serviceListItem]="selectedService"></eva-service-tester>
-    </ng-container>
-    <ng-template #emptyState>
-      <eva-empty-state title="Select a service to get started" icon="list"></eva-empty-state>
-    </ng-template>
-  </div>
-
+  <button mat-button (click)="addTab()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
 
-
+<eva-service-tester [testerState]="selectedServices[serviceListItem]" [serviceListItem]="selectedService"></eva-service-tester>
