@@ -42,6 +42,8 @@ import { ClipboardService } from './services/clipboard.service';
 import { DragComponent } from './components/drag/drag.component';
 import { EvaContextMenuModule } from './components/context-menu/context-menu.module';
 import { MatMenuModule } from '@angular/material/menu';
+import { ServiceTesterInfoComponent } from './components/service-tester-info/service-tester-info.component';
+import { TesterContainerComponent } from './pages/tester-container/tester-container.component';
 
 
 @NgModule({
@@ -60,12 +62,14 @@ import { MatMenuModule } from '@angular/material/menu';
     JsonFormatterComponent,
     CultureSelectorComponent,
     EmptyStateComponent,
-    DragComponent
+    DragComponent,
+    ServiceTesterInfoComponent,
+    TesterContainerComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      { path: '', component: TesterTabsComponent },
+      { path: '', component: TesterContainerComponent },
       { path: 'service/:serviceName', component: ServiceTesterComponent },
       { path: 'selector/:portNumber', component: ServicesSelectorComponent }
     ]),

@@ -1,0 +1,30 @@
+:host {
+  // 100 header height
+  height: calc(100vh - 100px);
+  display: block;
+}
+
+aside {
+  padding: 16px;
+  border-right: 1px solid var(--dark-green);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+
+  mat-form-field {
+    width: 100%;
+  }
+  button {
+    text-align: left;
+    font-size: 18px;
+    font-weight: normal;
+    ::ng-deep em {
+      color: yellow;
+    }
+  }
+
+  .name-space {
+    line-height: initial;
+    font-size: 10px;
+  }
+}

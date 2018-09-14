@@ -1,3 +1,28 @@
-<p>
-  tester-container works!
-</p>
+<div class="row m-0 h-100">
+  <aside class="col-12 col-md-3 h-100">
+    <form [formGroup]="searchForm">
+      <mat-form-field>
+        <input matInput placeholder="Search service" formControlName="search">
+      </mat-form-field>
+    </form>
+
+    <ng-container *ngIf=" services$ | async; let services">
+      <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
+        <button mat-button class="w-100" (click)="selectService(service)" [attr.title]="service.fuseJsHighlighted.name">
+          <span [innerHTML]="service.fuseJsHighlighted.name"></span>
+          <div class="name-space" [innerHTML]="service.fuseJsHighlighted.ns"></div>
+        </button>
+      </ng-container>
+    </ng-container>
+  </aside>
+
+  <div class="col-12 col-md-9">
+    <ng-container *ngIf="selectedService; else emptyState">
+      <eva-tester [selectedService]="selectedService"></eva-tester>
+    </ng-container>
+    <ng-template #emptyState>
+      <eva-empty-state title="Select a service to get started" icon="list"></eva-empty-state>
+    </ng-template>
+  </div>
+
+</div>
