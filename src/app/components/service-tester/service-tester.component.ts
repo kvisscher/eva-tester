@@ -152,20 +152,6 @@ export class ServiceTesterComponent implements OnInit {
 
 
   monacoLoad() {
-    // monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-    //   schemas: [{
-    //     uri: null,
-    //     fileMatch: ['foo.json'],
-    //     schema: {
-    //       type: 'object',
-    //       properties: {
-    //         p1: {
-    //           enum: ['v1', 'v2']
-    //         }
-    //       }
-    //     }
-    //   }]
-    // });
     // Whenever the editor loads, we want to fetch the typings
     //
     this.$evaTypings.load().subscribe(typings => {
