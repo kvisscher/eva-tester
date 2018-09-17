@@ -2,7 +2,7 @@
   <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex">
     <mat-tab
     *ngFor="let selectedService of selectedServices; let index = index"
-    [label]="selectedService.name || 'Service ' + (index + 1) ">
+    [label]="selectedService.tabName || 'Service ' + (index + 1) ">
       <eva-service-tester-info [testerState]="selectedServices[index]"></eva-service-tester-info>
     </mat-tab>
   </mat-tab-group>

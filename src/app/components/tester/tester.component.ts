@@ -12,7 +12,7 @@ import { IServiceChangePayload } from '../../pages/tester-container/tester-conta
 export interface ITesterState {
   listMetaData: IListServiceItem;
   detailMetaData: Observable<IServiceResponse>;
-  name: string;
+  tabName: string;
   editorModel: string;
   response: string;
 }
@@ -25,7 +25,7 @@ export interface ITesterState {
 export class TesterComponent implements OnInit {
 
   public selectedServices: Partial<ITesterState>[] = [{
-    name: 'Service',
+    tabName: 'Service',
     editorModel: null,
     response: null,
     detailMetaData: null,
@@ -47,7 +47,7 @@ export class TesterComponent implements OnInit {
       }
 
       this.selectedServices[this.selectedTabIndex] = {
-        name: serviceChangePayload.service.name,
+        tabName: serviceChangePayload.service.name,
         detailMetaData: this.$serviceSelector.fetch(serviceChangePayload.service.type),
         listMetaData: serviceChangePayload.service,
         editorModel: null,
@@ -58,7 +58,7 @@ export class TesterComponent implements OnInit {
 
   public addTab() {
     this.selectedServices.push({
-      name: null,
+      tabName: null,
       response: null,
       detailMetaData: null,
       editorModel: null,
@@ -69,7 +69,7 @@ export class TesterComponent implements OnInit {
   }
 
   selectedServiceChange(serviceName: IListServiceItem, index: number) {
-    this.selectedServices[index].name = serviceName.name;
+    this.selectedServices[index].tabName = serviceName.name;
   }
 
   updateServicesState(editorContainerState: TEditorContainerState, selectedTabIndex: number) {
