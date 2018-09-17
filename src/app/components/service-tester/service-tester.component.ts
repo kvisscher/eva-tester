@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { settings } from '@springtree/eva-sdk-redux';
 import stackblitz from '@stackblitz/sdk';
+import { isEqual } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { filter, first, map, tap } from 'rxjs/operators';
 import { NgxEditorModel } from '../../components/editor';
@@ -18,11 +19,12 @@ import { CultureSelectorComponent } from '../culture-selector/culture-selector.c
 import { EditorComponent } from '../editor/editor.component';
 import { ITesterState } from '../tester/tester.component';
 
-
+export type TEditorContainerState = Pick<ITesterState, 'editorModel' | 'response'>;
 
 enum ESelectedTabIndex {
   REQUEST = 0,
-  RESPONSE = 1
+  RESPONSE = 1,
+  DEMO = 2
 }
 
 
@@ -34,28 +36,8 @@ enum ESelectedTabIndex {
   animations: [listAnimation, fadeInOut],
   providers: [CultureSelectorComponent]
 })
-export class ServiceTesterComponent implements OnInit {
+export class ServiceTesterComponent {
 
-  private _serviceListeItem: IListServiceItem;
-
-  public get serviceListItem(): IListServiceItem {
-    return this._serviceListeItem;
-  }
-
-  @Input()
-  public set serviceListItem(value: IListServiceItem) {
-    if ( value !== this._serviceListeItem ) {
-      this.onServiceChange(value);
-
-      this._serviceListeItem = value;
-    }
-  }
-
-  public currentService$: Observable<IServiceResponse>;
-
-  public currentTypeSignature$: Observable<string>;
-
-  public loading = false;
 
   private _testerState: ITesterState;
 
@@ -64,10 +46,41 @@ export class ServiceTesterComponent implements OnInit {
   }
 
   @Input()
-  public set testerState(value: ITesterState) {
-    console.log(value);
-    this._testerState = value;
+  public set testerState(testerState: ITesterState) {
+
+    if ( isEqual(testerState, this._testerState) ) {
+      return;
+    }
+
+    this._testerState = testerState;
+
+    if ( testerState && testerState.listMetaData && !testerState.editorModel ) {
+      this.onServiceChange(testerState.listMetaData);
+
+      this.editorContainerState = {
+        response: this._testerState.response,
+        editorModel: this._testerState.editorModel
+      };
+    }
+
+    this.selectedTabIndex = ESelectedTabIndex.REQUEST;
   }
+
+
+  /**
+   * This will be a partial copy of the tester state that will be passed in
+   * we will be changing this copy and will notify the parent about the changes
+   */
+  editorContainerState: TEditorContainerState = {
+    editorModel: null,
+    response: null
+  };
+
+  @Output() editorContainerStateChange = new EventEmitter<TEditorContainerState>();
+
+  public currentService$: Observable<IServiceResponse>;
+
+  public currentTypeSignature$: Observable<string>;
 
   @ViewChild(EditorComponent) monacoEditor: EditorComponent;
 
@@ -90,9 +103,6 @@ export class ServiceTesterComponent implements OnInit {
   public form = this.formBuilder.group({
     editor: [null]
   });
-
-  /** Response of the service */
-  public response: any;
 
   /** Whether to expand all the json or not */
   public expandAllJson = null;
@@ -128,23 +138,17 @@ export class ServiceTesterComponent implements OnInit {
         })
       ).subscribe( services => {
         const matchingService = services.find( service => service.name.toLowerCase() === serviceName.toLowerCase()  );
-
-        this.serviceListItem = matchingService;
       });
 
     });
-  }
 
-  ngOnInit() {
-
+    this.form.get('editor').valueChanges.subscribe( value => {
+      this.editorContainerStateChange.emit(this.editorContainerState);
+    });
   }
 
   /** Whenever a service is selected, we will fetch it and create a code template */
   onServiceChange(service: IListServiceItem) {
-
-    this.response = null;
-
-    this.loading = true;
 
     this.selectedTabIndex = ESelectedTabIndex.REQUEST;
 
@@ -160,9 +164,6 @@ export class ServiceTesterComponent implements OnInit {
       this.form.get('editor').setValue(newEditorValue);
     });
 
-    this.currentService$.subscribe( value => {
-      this.loading = false;
-    });
   }
 
 
@@ -203,12 +204,14 @@ export class ServiceTesterComponent implements OnInit {
     .pipe(first())
     .toPromise()
     .then( response => {
-      this.response = response;
+      this.editorContainerState.response = response;
     }).catch( exception => {
-      this.response = exception.error;
+      this.editorContainerState.response = exception.error;
     })
     .then(() => {
       this.selectedTabIndex = ESelectedTabIndex.RESPONSE;
+
+      this.editorContainerStateChange.emit(this.editorContainerState);
     });
   }
 
@@ -265,7 +268,7 @@ export class ServiceTesterComponent implements OnInit {
 
   async openCodeSample() {
 
-    const serviceName = this.serviceListItem.name;
+    const serviceName = this.testerState.listMetaData.name;
 
     const reducerName = serviceName.charAt(0).toLowerCase() + serviceName.slice(1);
 

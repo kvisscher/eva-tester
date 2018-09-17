@@ -13,12 +13,12 @@
 
   </mat-tab>
 
-  <mat-tab label="Response" [disabled]="!response">
+  <mat-tab label="Response" [disabled]="!editorContainerState.response">
     <div class="response-buttons">
       <button mat-button (click)="expandAllJson = !expandAllJson">Toggle</button>
-        <button mat-button (click)="copyResponse(response)">Copy</button>
+        <button mat-button (click)="copyResponse(editorContainerState.response)">Copy</button>
     </div>
-    <eva-json-formatter [expandAll]="expandAllJson" [json]="response"></eva-json-formatter>
+    <eva-json-formatter [expandAll]="expandAllJson" [json]="editorContainerState.response"></eva-json-formatter>
   </mat-tab>
 
   <mat-tab label="Live demo">

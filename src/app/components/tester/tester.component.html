@@ -1,5 +1,5 @@
 <div class="tabs-container">
-  <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex">
     <mat-tab
     *ngFor="let selectedService of selectedServices; let index = index"
     [label]="selectedService.name || 'Service ' + (index + 1) ">
@@ -12,4 +12,14 @@
   </button>
 </div>
 
-<eva-service-tester [testerState]="selectedServices[serviceListItem]" [serviceListItem]="selectedService"></eva-service-tester>
+<eva-service-tester
+  [hidden]="!selectedServices[selectedTabIndex]?.listMetaData"
+  [testerState]="selectedServices[selectedTabIndex]"
+  (editorContainerStateChange)="updateServicesState($event, selectedTabIndex)"
+></eva-service-tester>
+
+<eva-empty-state
+  *ngIf="!selectedServices[selectedTabIndex]?.listMetaData"
+  title="Select a service to get started"
+  icon="list">
+</eva-empty-state>

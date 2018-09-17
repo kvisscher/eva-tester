@@ -3,6 +3,7 @@ import { IListServiceItem } from '../../services/list-services.service';
 import { ServiceSelectorService, IServiceResponse } from '../../services/service-selector.service';
 import { Observable } from 'rxjs/Observable';
 import uuid from '../../shared/random-id';
+import { TEditorContainerState } from '../service-tester/service-tester.component';
 
 /** Represents an editor tab */
 export interface ITesterState {
@@ -74,8 +75,10 @@ export class TesterComponent implements OnInit {
     this.selectedServices[index].name = serviceName.name;
   }
 
-  onTabChange(index: number) {
-
+  updateServicesState(editorContainerState: TEditorContainerState, selectedTabIndex: number) {
+    console.log('selected tab index..', selectedTabIndex);
+    this.selectedServices[selectedTabIndex].editorModel = editorContainerState.editorModel;
+    this.selectedServices[selectedTabIndex].response = editorContainerState.response;
   }
 
 }
