@@ -60,6 +60,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     if ( show === false ) {
       this.currentAction = CurrentAction.MainSearch;
       this.form.reset();
+
+      this.activeSearchIndex = null;
     }
   }
 
@@ -282,7 +284,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
     const resultElements = this.resultsContainer.nativeElement.querySelectorAll('a');
 
-    if ( this.activeSearchIndex === 0 ) {
+    if ( this.activeSearchIndex === 0 || this.activeSearchIndex === null ) {
       const newIndex = resultElements.length - 1;
 
       this.activeSearchIndex = newIndex;
@@ -300,7 +302,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
     const resultElements = this.resultsContainer.nativeElement.querySelectorAll('a');
 
-    if ( resultElements.length - 1 === this.activeSearchIndex ) {
+    if ( resultElements.length - 1 === this.activeSearchIndex || this.activeSearchIndex === null ) {
       this.activeSearchIndex = 0;
     } else {
       this.activeSearchIndex++;
