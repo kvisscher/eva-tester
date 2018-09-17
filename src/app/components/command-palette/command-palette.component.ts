@@ -280,6 +280,11 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   }
 
   @HostListener('window:keydown.ArrowUp', ['$event']) onArrowUp(e: KeyboardEvent) {
+    /** If this element is hidden, we don't want to execute this method */
+    if ( this.show === false ) {
+      return;
+    }
+
     e.preventDefault();
 
     const resultElements = this.resultsContainer.nativeElement.querySelectorAll('a');
@@ -298,6 +303,11 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   }
 
   @HostListener('window:keydown.ArrowDown', ['$event']) onArrowDown(e: KeyboardEvent) {
+    /** If this element is hidden, we don't want to execute this method */
+    if ( this.show === false ) {
+      return;
+    }
+
     e.preventDefault();
 
     const resultElements = this.resultsContainer.nativeElement.querySelectorAll('a');
