@@ -105,7 +105,7 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
   public get showMainSearchResults(): boolean {
     const value: string = this.form.get('mainSearch').value as string || '';
 
-    const showMainSearchResults = value.length > 0 && this.currentAction === CurrentAction.MainSearch;
+    const showMainSearchResults = this.currentAction === CurrentAction.MainSearch;
 
     return showMainSearchResults;
   }
