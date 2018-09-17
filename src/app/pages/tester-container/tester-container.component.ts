@@ -7,6 +7,12 @@ import { ContextMenuController } from '../../components/context-menu';
 import { FormBuilder } from '@angular/forms';
 import { ServiceSelectorService } from '../../services/service-selector.service';
 import { AngularFusejsOptions } from 'angular-fusejs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
+export interface IServiceChangePayload {
+  newTab: boolean;
+  service: IListServiceItem;
+}
 
 @Component({
   selector: 'eva-tester-container',
@@ -37,7 +43,7 @@ export class TesterContainerComponent implements OnInit {
   );
 
 
-  public selectedService: IListServiceItem;
+  public selectedService$: BehaviorSubject<IServiceChangePayload> = new BehaviorSubject(null);
 
   constructor(
     private contextMenuCtrl: ContextMenuController,
@@ -54,8 +60,21 @@ export class TesterContainerComponent implements OnInit {
   }
 
   /** Whenever a service is selected, we will fetch it and create a code template */
-  selectService(service: IListServiceItem) {
-    this.selectedService = service;
+  selectService(service: IListServiceItem, mouseEvent: MouseEvent) {
+    const newTab = mouseEvent.ctrlKey || mouseEvent.metaKey;
+
+    const serviceChangePayload: IServiceChangePayload = {
+      newTab: newTab,
+      service: {
+        name: service.name,
+        ns: service.ns,
+        type: service.type
+      }
+    };
+
+    console.log('select', serviceChangePayload);
+
+    this.selectedService$.next(serviceChangePayload);
   }
 
   openContextMenu(event: MouseEvent) {

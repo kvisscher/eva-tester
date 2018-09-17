@@ -1,15 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { IListServiceItem } from '../../services/list-services.service';
-import { ServiceSelectorService, IServiceResponse } from '../../services/service-selector.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { IListServiceItem } from '../../services/list-services.service';
+import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
 import uuid from '../../shared/random-id';
 import { TEditorContainerState } from '../service-tester/service-tester.component';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import isRequired from '../../decorators/is-required';
+import { IServiceChangePayload } from '../../pages/tester-container/tester-container.component';
 
 /** Represents an editor tab */
 export interface ITesterState {
   listMetaData: IListServiceItem;
   detailMetaData: Observable<IServiceResponse>;
-  id: string;
   name: string;
   editorModel: string;
   response: string;
@@ -26,49 +28,44 @@ export class TesterComponent implements OnInit {
     name: 'Service',
     editorModel: null,
     response: null,
-    id: null,
     detailMetaData: null,
     listMetaData: null
   }];
 
-  private _selectedService: IListServiceItem;
-
-  public get selectedService(): IListServiceItem {
-    return this._selectedService;
-  }
   @Input()
-  public set selectedService(value: IListServiceItem) {
-    this._selectedService = value;
-
-    this.selectedServices[this.selectedTabIndex] = {
-      name: value.name,
-      detailMetaData: this.$serviceSelector.fetch(value.type),
-      listMetaData: value,
-      editorModel: null,
-      id: uuid(),
-      response: null
-    };
-  }
+  @isRequired
+  selectedService$: BehaviorSubject<IServiceChangePayload>;
 
   public selectedTabIndex = 0;
 
   constructor(private $serviceSelector: ServiceSelectorService) {}
 
   ngOnInit(): void {
+    this.selectedService$.subscribe( serviceChangePayload => {
+      if ( serviceChangePayload.newTab ) {
+        this.addTab();
+      }
 
+      this.selectedServices[this.selectedTabIndex] = {
+        name: serviceChangePayload.service.name,
+        detailMetaData: this.$serviceSelector.fetch(serviceChangePayload.service.type),
+        listMetaData: serviceChangePayload.service,
+        editorModel: null,
+        response: null
+      };
+    });
   }
 
   public addTab() {
     this.selectedServices.push({
       name: null,
-      id: uuid(),
       response: null,
       detailMetaData: null,
       editorModel: null,
       listMetaData: null
     });
 
-    this.selectedTabIndex = this.selectedServices.length;
+    this.selectedTabIndex = this.selectedServices.length - 1;
   }
 
   selectedServiceChange(serviceName: IListServiceItem, index: number) {
@@ -76,7 +73,6 @@ export class TesterComponent implements OnInit {
   }
 
   updateServicesState(editorContainerState: TEditorContainerState, selectedTabIndex: number) {
-    console.log('selected tab index..', selectedTabIndex);
     this.selectedServices[selectedTabIndex].editorModel = editorContainerState.editorModel;
     this.selectedServices[selectedTabIndex].response = editorContainerState.response;
   }

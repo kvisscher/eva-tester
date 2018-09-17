@@ -8,7 +8,7 @@
 
     <ng-container *ngIf=" services$ | async; let services">
       <ng-container *ngFor="let service of (services | fusejs:searchTerms:searchOptions)">
-        <button mat-button class="w-100" (click)="selectService(service)" [attr.title]="service.fuseJsHighlighted.name">
+        <button mat-button class="w-100" (click)="selectService(service, $event)" [attr.title]="service.fuseJsHighlighted.name">
           <span [innerHTML]="service.fuseJsHighlighted.name"></span>
           <div class="name-space" [innerHTML]="service.fuseJsHighlighted.ns"></div>
         </button>
@@ -17,8 +17,8 @@
   </aside>
 
   <div class="col-12 col-md-9">
-    <ng-container *ngIf="selectedService; else emptyState">
-      <eva-tester [selectedService]="selectedService"></eva-tester>
+    <ng-container *ngIf="selectedService$.value; else emptyState">
+      <eva-tester [selectedService$]="selectedService$"></eva-tester>
     </ng-container>
     <ng-template #emptyState>
       <eva-empty-state title="Select a service to get started" icon="list"></eva-empty-state>
@@ -26,3 +26,5 @@
   </div>
 
 </div>
+
+
