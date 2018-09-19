@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { IListServiceItem } from '../../services/list-services.service';
 import { IServiceResponse, ServiceSelectorService } from '../../services/service-selector.service';
@@ -7,6 +7,7 @@ import { TEditorContainerState } from '../service-tester/service-tester.componen
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import isRequired from '../../decorators/is-required';
 import { IServiceChangePayload } from '../../pages/tester-container/tester-container.component';
+import { ContextMenuController } from '../context-menu';
 
 /** Represents an editor tab */
 export interface ITesterState {
@@ -38,7 +39,43 @@ export class TesterComponent implements OnInit {
 
   public selectedTabIndex = 0;
 
-  constructor(private $serviceSelector: ServiceSelectorService) {}
+  constructor(private $serviceSelector: ServiceSelectorService, private contextMenuCtrl: ContextMenuController) {}
+
+  @HostListener('document:contextmenu', ['$event']) onclick(event: MouseEvent) {
+    console.log('click..', event);
+
+    const targetEl: HTMLElement = ((event as any).path as HTMLElement[])
+      .find( el => (el as HTMLElement).classList.contains('mat-tab-label') );
+
+    /**
+     * We are only interested in mat tab labels that fall under our tabs
+     * ⚠️ TO:DO refactor this to use viewChild of mat-tab-group in the template
+     */
+    const ourTabs = document.querySelector('.services-tabs').contains(targetEl);
+
+    if ( targetEl && ourTabs ) {
+
+      event.preventDefault();
+
+      const parent = targetEl.parentElement;
+
+      const nodes: any[] = Array.prototype.slice.call(parent.children);
+
+      const index = nodes.indexOf(targetEl);
+
+      const tabName = targetEl.querySelector('.mat-tab-label-content').innerHTML;
+
+      console.log('open context menu for', tabName);
+
+      this.contextMenuCtrl.present({
+        event,
+        menu: [{
+          title: 'Delete',
+          handler: () => this.removeTab(index),
+        }]
+      });
+    }
+  }
 
   ngOnInit(): void {
     this.selectedService$.subscribe( serviceChangePayload => {
@@ -75,6 +112,10 @@ export class TesterComponent implements OnInit {
   updateServicesState(editorContainerState: TEditorContainerState, selectedTabIndex: number) {
     this.selectedServices[selectedTabIndex].editorModel = editorContainerState.editorModel;
     this.selectedServices[selectedTabIndex].response = editorContainerState.response;
+  }
+
+  public removeTab(index: number) {
+    this.selectedServices.splice(index, 1);
   }
 
 }

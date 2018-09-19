@@ -1,5 +1,5 @@
 <div class="tabs-container">
-  <mat-tab-group *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex">
+  <mat-tab-group class="services-tabs" *ngIf="!(noUser$ | async)" [(selectedIndex)]="selectedTabIndex">
     <mat-tab
     *ngFor="let selectedService of selectedServices; let index = index"
     [label]="selectedService.tabName || 'Service ' + (index + 1) ">
