@@ -59,13 +59,15 @@ export class TesterComponent implements OnInit {
 
       const parent = targetEl.parentElement;
 
-      const nodes: any[] = Array.prototype.slice.call(parent.children);
+      const nodes: HTMLElement[] = Array.prototype.slice.call(parent.children);
+
+      if ( nodes.length  === 1 ) {
+        return;
+      }
 
       const index = nodes.indexOf(targetEl);
 
       const tabName = targetEl.querySelector('.mat-tab-label-content').innerHTML;
-
-      console.log('open context menu for', tabName);
 
       this.contextMenuCtrl.present({
         event,
