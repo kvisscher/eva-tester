@@ -2,8 +2,8 @@
   <mat-tab label="Request">
     <form [formGroup]="form">
       <eva-monaco-editor
-        (keydown.ctrl.Enter)="preformRequest()"
-        (keydown.meta.Enter)="preformRequest()"
+        (keydown.control.Enter)="preformRequest($event)"
+        (keydown.meta.Enter)="preformRequest($event)"
         [model]="monacoModel" [options]="monacoOptions" formControlName="editor" (monacoLoad)="monacoLoad()"></eva-monaco-editor>
     </form>
 
