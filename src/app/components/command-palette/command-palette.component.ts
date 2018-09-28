@@ -361,11 +361,19 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
     this.evaSearchResults$ = new BehaviorSubject([]).asObservable();
 
     if ( this.currentAction === CurrentAction.EndPointUrlUpdate ) {
-      const newEndPointUrl = prompt('New end point url');
+      const newEndPointUrlInput = prompt('New end point url');
 
-      if ( newEndPointUrl ) {
-        this.$endPointUrlService.onChange(newEndPointUrl);
+      try {
+        const newEndPointUrl = new URL(newEndPointUrlInput);
+
+        if (newEndPointUrl) {
+          this.$endPointUrlService.onChange(newEndPointUrl.origin);
+        }
+      } catch (e) {
+        this.logger.error('Error parsing URL');
+        this.matSnackBar.open('Invalid URL', null, { duration: 3000 });
       }
+
     }
     if ( this.currentAction === CurrentAction.EndPointUrlSearch ) {
       this.evaSearchResults$ = of(this.$endPointUrlService.endPointUrls.map(endPointUrl => ({
@@ -426,6 +434,8 @@ export class CommandPaletteComponent implements OnInit, ILoggable {
 
     if ( barcodes ) {
       this.$clipboardService.copyToClipboard(barcodes[0]);
+
+      this.matSnackBar.open(`Barcode copied to clipboard`, null, { duration: 3000 });
     }
   }
 

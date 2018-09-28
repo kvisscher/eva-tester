@@ -76,6 +76,10 @@ export class EndPointUrlService implements ILoggable {
 
       this.endPointUrl = origin;
 
+      const title = document.head.querySelector('title').innerText;
+
+      window.history.replaceState({}, title, '');
+
       location.reload();
     } catch (e) {
       this.logger.error('Error parsing the given URL, please try again');

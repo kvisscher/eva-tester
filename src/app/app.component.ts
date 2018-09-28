@@ -5,6 +5,7 @@ import { StoreInitService } from './services/store-init.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { map, filter } from 'rxjs/operators';
 import { EndPointUrlService } from './services/end-point-url.service';
+import { MatSnackBar } from '@angular/material';
 
 @Logger
 @Component({
@@ -19,7 +20,8 @@ export class AppComponent implements ILoggable {
     private $applicationService: ApplicationsService,
     private storeInitService: StoreInitService,
     private activatedRoute: ActivatedRoute,
-    private $endPointUrlService: EndPointUrlService
+    private $endPointUrlService: EndPointUrlService,
+    private matSnackBar: MatSnackBar
   ) {
     if ( this.$applicationService.getSelected() ) {
       this.storeInitService.initializeStore();
@@ -30,12 +32,17 @@ export class AppComponent implements ILoggable {
       map( paramsAsMap => paramsAsMap.get('endpoint') ),
       filter( Boolean ),
       filter( endPoint => {
-        const differentEndPoint = endPoint !== this.$endPointUrlService.endPointUrl;
 
-        this.logger.log(endPoint);
-        this.logger.log(this.$endPointUrlService.endPointUrl);
+        try {
+          const newEndpointUrl = new URL(endPoint);
 
-        return differentEndPoint;
+          const differentEndPoint = newEndpointUrl.origin !== new URL(this.$endPointUrlService.endPointUrl).origin;
+
+          return differentEndPoint;
+        } catch (e) {
+          this.matSnackBar.open('Invalid URL', null, { duration: 3000 });
+          return false;
+        }
       } )
     )
     .subscribe( (endpoint: string) => {
