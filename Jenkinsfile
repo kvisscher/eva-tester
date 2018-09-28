@@ -43,24 +43,21 @@ node('docker') {
         }
     }
 
-  stage('Deploy') {
-    if (!isTestBuild) {
-      print "Not deploying because this is not a test build (${branchName})"
-      return
+    if (isProductionBuild) {
+        stage('Deploy') {
+            print "Deploying.."
+
+            def context = 'azure-prod-eva'
+            def namespace = 'test-eva'
+
+            print "Deploying ${imageName}:${imageTag} using the context ${context}"
+            slackSend channel: '#jenkins', message: "Deploying ${imageName}:${imageTag} using the context ${context}"
+
+            sh "kubectl --context=\"${context}\" -n ${namespace} set image deployment/dora dora=${imageName}:${imageTag}"
+
+            print "Done deploying ${imageName}:${imageTag}"
+            slackSend channel: '#jenkins', message:  "Done deploying ${imageName}:${imageTag}"
+        }
     }
-
-    print "Deploying ${branchName}.."
-
-    def context = 'azure-prod-eva'
-    def namespace = 'test-eva'
-
-    print "Deploying ${imageName}:${imageTag} using the context ${context}"
-    slackSend channel: '#jenkins', message: "Deploying ${imageName}:${imageTag} using the context ${context}"
-
-    sh "kubectl --context=\"${context}\" -n ${namespace} set image deployment/${deploymentName} ${containerName}=${imageName}:${imageTag}"
-    
-    print "Done deploying ${imageName}:${imageTag}"
-    slackSend channel: '#jenkins', message:  "Done deploying ${imageName}:${imageTag}"
-  }
 
 }
