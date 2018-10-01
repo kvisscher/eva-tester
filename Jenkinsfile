@@ -53,7 +53,7 @@ node('docker') {
             print "Deploying ${imageName}:latest using the context ${context}"
             slackSend channel: '#jenkins', message: "Deploying ${imageName}:latest using the context ${context}"
 
-            sh "kubectl --context=\"${context}\" -n ${namespace} set image deployment/dora dora=${imageName}:latest"
+            sh "kubectl --context=\"${context}\" -n ${namespace} set image deployment/dora eva-dora=${imageName}:latest"
 
             print "Done deploying ${imageName}:latest"
             slackSend channel: '#jenkins', message:  "Done deploying ${imageName}:latest"
